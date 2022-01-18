@@ -1,4 +1,4 @@
-|build_badge| |license| |jupyter| |black|
+|build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
 |codecov| |better_code| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
 

@@ -67,7 +67,7 @@ class Currency(object):
             raise FileNotFoundError(f'currency record with isoCode "{currency_iso_code}" not found')
         return currency_id
 
-    # get_currency_id_by_iso_code{{{
+    # get_currency_l_dict_all{{{
     def get_currency_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         get all currency records - filters and so on can be set in the payload
@@ -87,7 +87,7 @@ class Currency(object):
         >>> my_api = Currency()
         >>> my_l_dict_data = my_api.get_currency_l_dict_all()
         """
-        # get_currency_id_by_iso_code}}}
+        # get_currency_l_dict_all}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="currency", payload=payload)
         l_dict_data = list(dict_response["data"])

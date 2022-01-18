@@ -2,9 +2,9 @@ lib_shopware6_api
 =================
 
 
-Version v1.0.0 as of 2022-01-18 see `Changelog`_
+Version v1.0.1 as of 2022-01-18 see `Changelog`_
 
-|build_badge| |license| |jupyter| |black|
+|build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
 |codecov| |better_code| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
 
@@ -169,28 +169,24 @@ back to `Overview`_
 
 .. code-block:: python
 
-        @lru_cache(maxsize=None)
-        def get_currency_id_by_iso_code(self, currency_iso_code: str = "EUR") -> str:
+        def get_currency_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
             """
-            :param currency_iso_code: the currency iso code, like 'EUR', 'CHF', ...
-            :returns: the id of the currency record
+            get all currency records - filters and so on can be set in the payload
+            we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
+
+            :parameters
+                payload, to set filters etc.
+
+            :returns
+                l_dict_data,
+
+
+            sample payload :
+                page and limit will be overridden by function base_client.request_get_paginated() and will be ignored
 
             >>> # Setup
             >>> my_api = Currency()
-
-            >>> # test get currency id
-            >>> my_currency_id = my_api.get_currency_id_by_iso_code('EUR')
-            >>> assert 32 == len(my_currency_id)
-
-            >>> # test not existing (int)
-            >>> my_api.get_currency_id_by_iso_code(currency_iso_code='not_existing')
-            Traceback (most recent call last):
-                ...
-            FileNotFoundError: currency record with isoCode "not_existing" not found
-
-            >>> # Test clear Cache - the Cache has to be cleared if currencies are inserted or deleted
-            >>> my_api.get_currency_id_by_iso_code.cache_clear()
-
+            >>> my_l_dict_data = my_api.get_currency_l_dict_all()
             """
 
 DeliveryTime
@@ -1743,8 +1739,11 @@ Installation and Upgrade
     python -m pip --upgrade pip
     python -m pip --upgrade setuptools
 
+- to install the latest release from PyPi via pip (recommended):
 
+.. code-block::
 
+    python -m pip install --upgrade lib_shopware6_api
 
 - to install the latest version from github via pip:
 
@@ -1759,6 +1758,9 @@ Installation and Upgrade
 .. code-block::
 
     # Insert following line in Your requirements.txt:
+    # for the latest Release on pypi:
+    lib_shopware6_api
+
     # for the latest development version :
     lib_shopware6_api @ git+https://github.com/bitranox/lib_shopware6_api.git
 
@@ -1838,6 +1840,10 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v1.0.1
+--------
+2022-01-18: Documentation update, make PyPi package
 
 v1.0.0
 --------

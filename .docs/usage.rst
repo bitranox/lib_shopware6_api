@@ -35,8 +35,8 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_currency.py
     :code: python
-    :start-after: # get_currency_id_by_iso_code{{{
-    :end-before:  # get_currency_id_by_iso_code}}}
+    :start-after: # get_currency_l_dict_all{{{
+    :end-before:  # get_currency_l_dict_all}}}
 
 DeliveryTime
 ============

@@ -7,7 +7,7 @@
     python -m pip --upgrade setuptools
 
 
-
+.. include:: ./installation_via_pypi.rst
 
 - to install the latest version from github via pip:
 
@@ -22,6 +22,9 @@
 .. code-block::
 
     # Insert following line in Your requirements.txt:
+    # for the latest Release on pypi:
+    lib_shopware6_api
+
     # for the latest development version :
     lib_shopware6_api @ git+https://github.com/bitranox/lib_shopware6_api.git
 
