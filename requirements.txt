@@ -1,10 +1,6 @@
 ## Project Requirements
-attr
+attrs
 click
 cli_exit_tools
 lib_detect_testenv
 lib_shopware6_api_base
-# oauthlib
-# requests
-# requests_oauthlib
-tqdm

@@ -2,7 +2,7 @@ lib_shopware6_api
 =================
 
 
-Version v1.0.1 as of 2022-01-18 see `Changelog`_
+Version v1.0.2 as of 2022-01-18 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -1806,15 +1806,11 @@ following modules will be automatically installed :
 .. code-block:: bash
 
     ## Project Requirements
-    attr
+    attrs
     click
     cli_exit_tools
     lib_detect_testenv
     lib_shopware6_api_base
-    # oauthlib
-    # requests
-    # requests_oauthlib
-    tqdm
 
 Acknowledgements
 ----------------
@@ -1840,6 +1836,10 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v1.0.2
+--------
+- clean requirements.txt
 
 v1.0.1
 --------
