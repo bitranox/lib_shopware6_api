@@ -2,7 +2,7 @@ lib_shopware6_api
 =================
 
 
-Version v2.0.0 as of 2022-01-19 see `Changelog`_
+Version v2.0.1 as of 2022-01-20 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -611,7 +611,7 @@ back to `Overview`_
 
 .. code-block:: python
 
-        def get_media_folder_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        def get_media_folders(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
             """
             get all media_folder - filters and so on can be set in the payload
             we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -627,7 +627,7 @@ back to `Overview`_
 
             >>> # Setup
             >>> my_api = Media()
-            >>> my_l_dict_data = my_api.get_media_folder_l_dict_all()
+            >>> my_l_dict_data = my_api.get_media_folders()
             """
 
 .. code-block:: python
@@ -1379,7 +1379,8 @@ back to `Overview`_
             >>> my_url='https://pics.rotek.at/test/test001/bilder/test001_01_1280.jpg'
 
 
-            >>> my_product_id = my_api.insert_product(name='rn-doctest-article', product_number=my_product_number, price_brutto=Decimal(0), stock=0)
+            >>> my_product_id = my_api.insert_product(name='test_del_prod_media_rel_by_prod_number_001', product_number=my_product_number, \
+                    price_brutto=Decimal(0), stock=0)
 
             >>> my_position = 10
             >>> my_media_id_10 = my_api.media.upsert_media(product_number=my_product_number, position=my_position, url=my_url)
@@ -1389,15 +1390,18 @@ back to `Overview`_
             >>> my_media_id_20 = my_api.media.upsert_media(product_number=my_product_number, position=my_position, url=my_url)
             >>> my_product_media_id_20 = my_api.insert_product_media_relation(product_id=my_product_id, media_id=my_media_id_20, position=my_position)
 
-            >>> # Test
+            >>> # Test delete product_media_relations
             >>> assert True == my_api.is_media_used_in_product_media(media_id=my_media_id_10)
             >>> assert True == my_api.is_media_used_in_product_media(media_id=my_media_id_20)
             >>> my_api.delete_product_media_relations_by_product_number(product_number=my_product_number)
             >>> assert False == my_api.is_media_used_in_product_media(media_id=my_media_id_10)
             >>> assert False == my_api.is_media_used_in_product_media(media_id=my_media_id_20)
 
-            >>> # Teardown
+            >>> # Test delete product_media_relations - product not existing is ok
             >>> my_api.delete_product_by_id(product_id=my_product_id)
+            >>> my_api.delete_product_media_relations_by_product_number(product_number=my_product_number)
+
+            >>> # Teardown
             >>> my_api.media.delete_media_folder_by_path(my_api.media.conf_path_media_folder_root, force=True)
 
             """
@@ -1481,7 +1485,7 @@ back to `Overview`_
             >>> my_api = Product()
 
             >>> # insert article
-            >>> my_new_product_id = my_api.insert_product(name='rn-doctest-article', product_number='test_insert_article_by_product_number_999',
+            >>> my_new_product_id = my_api.insert_product(name='test_insert_product001', product_number='test_insert_article_by_product_number_999',
             ...                                           price_brutto=Decimal(100), stock=0)
             >>> assert 32 == len(my_new_product_id)
 
@@ -1930,6 +1934,10 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v2.0.1
+--------
+2022-01-19: update documentation
 
 v2.0.0
 --------

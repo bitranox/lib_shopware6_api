@@ -460,8 +460,8 @@ class Media(object):
             parent_id = media_folder_id
         return media_folder_id
 
-    # get_media_folder_l_dict_all{{{
-    def get_media_folder_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    # get_media_folders{{{
+    def get_media_folders(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         get all media_folder - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -477,9 +477,9 @@ class Media(object):
 
         >>> # Setup
         >>> my_api = Media()
-        >>> my_l_dict_data = my_api.get_media_folder_l_dict_all()
+        >>> my_l_dict_data = my_api.get_media_folders()
         """
-        # get_media_folder_l_dict_all}}}
+        # get_media_folders}}}
         dict_response = self._admin_client.request_get_paginated(request_url="media-folder", payload=payload)
         l_dict_data = list(dict_response["data"])
         return l_dict_data

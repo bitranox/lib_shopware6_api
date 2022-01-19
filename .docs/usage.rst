@@ -139,8 +139,8 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
-    :start-after: # get_media_folder_l_dict_all{{{
-    :end-before:  # get_media_folder_l_dict_all}}}
+    :start-after: # get_media_folders{{{
+    :end-before:  # get_media_folders}}}
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
