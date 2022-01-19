@@ -2,7 +2,7 @@ lib_shopware6_api
 =================
 
 
-Version v1.0.2 as of 2022-01-18 see `Changelog`_
+Version v2.0.0 as of 2022-01-19 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -102,6 +102,7 @@ Overview
 - `Media`_
 - `Product`_
 - `Tax`_
+- `Unit`_
 
 -------------------
 
@@ -123,6 +124,7 @@ back to `Overview`_
             >>> my_api_media=my_api.media
             >>> my_api_product=my_api.product
             >>> my_api_tax=my_api.tax
+            >>> my_api_unit=my_api.unit
 
             """
 
@@ -169,7 +171,7 @@ back to `Overview`_
 
 .. code-block:: python
 
-        def get_currency_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        def get_currencies(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
             """
             get all currency records - filters and so on can be set in the payload
             we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -186,7 +188,7 @@ back to `Overview`_
 
             >>> # Setup
             >>> my_api = Currency()
-            >>> my_l_dict_data = my_api.get_currency_l_dict_all()
+            >>> my_l_dict_data = my_api.get_currencies()
             """
 
 DeliveryTime
@@ -225,7 +227,7 @@ back to `Overview`_
 .. code-block:: python
 
         @lru_cache(maxsize=None)
-        def get_delivery_time_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        def get_delivery_times(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
             """
             get all delivery-time records - filters and so on can be set in the payload
             we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -242,12 +244,12 @@ back to `Overview`_
 
             >>> # Setup
             >>> my_api = DeliveryTime()
-            >>> my_l_dict_data = my_api.get_delivery_time_l_dict_all()
+            >>> my_l_dict_data = my_api.get_delivery_times()
             """
 
 .. code-block:: python
 
-        def search_delivery_time_l_dict(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+        def search_delivery_times(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
             """
             search delivery-time records
 
@@ -255,7 +257,7 @@ back to `Overview`_
             >>> my_api = DeliveryTime()
 
             >>> # insert article
-            >>> ignore = my_api.search_delivery_time_l_dict()
+            >>> ignore = my_api.search_delivery_times()
 
             """
 
@@ -530,7 +532,7 @@ back to `Overview`_
 
 .. code-block:: python
 
-        def get_media_folder_configuration_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        def get_media_folder_configurations(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
             """
             get all media_folder_configurations - filters and so on can be set in the payload
             we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -546,7 +548,7 @@ back to `Overview`_
 
             >>> # Setup
             >>> my_api = Media()
-            >>> my_l_dict_data = my_api.get_media_folder_configuration_l_dict_all()
+            >>> my_l_dict_data = my_api.get_media_folder_configurations()
             """
 
 .. code-block:: python
@@ -659,7 +661,7 @@ back to `Overview`_
 
 .. code-block:: python
 
-        def get_media_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        def get_medias(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
             """
             get all media records - filters and so on can be set in the payload
             we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -676,7 +678,7 @@ back to `Overview`_
 
             >>> # Setup
             >>> my_api = Media()
-            >>> my_l_dict_data = my_api.get_media_l_dict_all()
+            >>> my_l_dict_data = my_api.get_medias()
             """
 
 .. code-block:: python
@@ -1031,7 +1033,7 @@ back to `Overview`_
 
 .. code-block:: python
 
-        def search_media_folders_l_dict(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+        def search_media_folders(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
             """
             get all the media folders
 
@@ -1039,13 +1041,13 @@ back to `Overview`_
             >>> my_api = Media()
 
             >>> # test
-            >>> my_l_data_dict = my_api.search_media_folders_l_dict()
+            >>> my_l_data_dict = my_api.search_media_folders()
 
             """
 
 .. code-block:: python
 
-        def search_media_l_dict(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+        def search_medias(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
             """
             get all the media
 
@@ -1053,7 +1055,7 @@ back to `Overview`_
             >>> my_api = Media()
 
             >>> # insert article
-            >>> ignore = my_api.search_media_l_dict()
+            >>> ignore = my_api.search_medias()
 
             """
 
@@ -1402,7 +1404,28 @@ back to `Overview`_
 
 .. code-block:: python
 
-        def get_product_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        def get_product_medias(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+            """
+            get all product_media - filters and so on can be set in the payload
+            we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
+
+            :parameters
+                payload, to set filters etc.
+
+            :returns
+                l_dict_data,
+
+            sample payload :
+                page and limit will be overridden by function base_client.request_get_paginated() and will be ignored
+
+            >>> # Setup
+            >>> my_api = Product()
+            >>> my_l_dict_data = my_api.get_product_medias()
+            """
+
+.. code-block:: python
+
+        def get_products(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
             """
             get all articles back - filters and so on can be set in the payload
             we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -1419,30 +1442,9 @@ back to `Overview`_
 
             >>> # Setup
             >>> my_api = Product()
-            >>> dict_data = my_api.get_product_l_dict_all()
+            >>> dict_data = my_api.get_products()
             >>> assert len(dict_data) > 5
 
-            """
-
-.. code-block:: python
-
-        def get_product_media_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-            """
-            get all product_media - filters and so on can be set in the payload
-            we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
-
-            :parameters
-                payload, to set filters etc.
-
-            :returns
-                l_dict_data,
-
-            sample payload :
-                page and limit will be overridden by function base_client.request_get_paginated() and will be ignored
-
-            >>> # Setup
-            >>> my_api = Product()
-            >>> my_l_dict_data = my_api.get_product_media_l_dict_all()
             """
 
 .. code-block:: python
@@ -1480,11 +1482,11 @@ back to `Overview`_
 
             >>> # insert article
             >>> my_new_product_id = my_api.insert_product(name='rn-doctest-article', product_number='test_insert_article_by_product_number_999',
-            ...                                           price_brutto=Decimal(0), stock=0)
+            ...                                           price_brutto=Decimal(100), stock=0)
             >>> assert 32 == len(my_new_product_id)
 
             >>> # Teardown
-            >>> my_api.delete_product_by_id(product_id=my_new_product_id)
+            >>> # my_api.delete_product_by_id(product_id=my_new_product_id)
 
             """
 
@@ -1559,7 +1561,27 @@ back to `Overview`_
 
 .. code-block:: python
 
-        def search_product_media_l_dict(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+        def is_product_number_existing(self, product_number: Union[int, str]) -> bool:
+            """
+            :param product_number:
+            :return:
+
+            >>> # Setup
+            >>> my_api = Product()
+            >>> my_new_product_id = my_api.insert_product(name='test_is_product_number_existing', product_number='is_product_number_existing_999')
+
+            >>> # Test
+            >>> assert True == my_api.is_product_number_existing(product_number = 'is_product_number_existing_999')
+            >>> assert False == my_api.is_product_number_existing(product_number = 'product_number_does_not_exist')
+
+            >>> # Teardown
+            >>> my_api.delete_product_by_id(product_id=my_new_product_id)
+
+            """
+
+.. code-block:: python
+
+        def search_product_medias(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
             """
             search product_media
 
@@ -1567,7 +1589,7 @@ back to `Overview`_
             >>> my_api = Product()
 
             >>> # insert article
-            >>> ignore = my_api.search_product_media_l_dict()
+            >>> ignore = my_api.search_product_medias()
 
             """
 
@@ -1665,7 +1687,7 @@ back to `Overview`_
 
 .. code-block:: python
 
-        def get_tax_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        def get_taxes(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
             """
             get all tax records - filters and so on can be set in the payload
             we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -1682,7 +1704,7 @@ back to `Overview`_
 
             >>> # Setup
             >>> my_api = Tax()
-            >>> my_l_dict_data = my_api.get_tax_l_dict_all()
+            >>> my_l_dict_data = my_api.get_taxes()
             """
 
 .. code-block:: python
@@ -1708,6 +1730,78 @@ back to `Overview`_
 
             >>> # Test clear Cache -the Cache has to be cleared if tax records are inserted or deleted
             >>> my_api.get_tax_id_by_name.cache_clear()
+
+            """
+
+Unit
+========
+back to `Overview`_
+
+.. code-block:: python
+
+    class Unit(object):
+        def __init__(
+            self, admin_client: Optional[Shopware6AdminAPIClientBase] = None, config: Optional[ConfShopware6ApiBase] = None, use_docker_test_container: bool = False
+        ) -> None:
+            """
+            :param admin_client:
+            :param config:
+            :param use_docker_test_container:
+
+            >>> # Setup
+            >>> my_api = Unit()
+
+            """
+
+.. code-block:: python
+
+        def cache_clear_unit(self) -> None:
+            """
+            Cache of some functions has to be cleared if unit records are inserted or deleted
+
+            >>> # Setup
+            >>> my_api = Unit()
+            >>> # Test
+            >>> my_api.cache_clear_unit()
+
+            """
+
+.. code-block:: python
+
+        @lru_cache(maxsize=None)
+        def get_units(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+            """
+            get all delivery-time records - filters and so on can be set in the payload
+            we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
+
+            :parameters
+                payload, to set filters etc.
+
+            :returns
+                l_dict_data,
+
+
+            sample payload :
+                page and limit will be overridden by function base_client.request_get_paginated() and will be ignored
+
+            >>> # Setup
+            >>> my_api = Unit()
+
+            >>> # Test
+            >>> my_l_dict_data = my_api.get_units()
+            """
+
+.. code-block:: python
+
+        def search_units(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+            """
+            search delivery-time records
+
+            >>> # Setup
+            >>> my_api = Unit()
+
+            >>> # Test
+            >>> ignore = my_api.search_units()
 
             """
 
@@ -1837,9 +1931,13 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+v2.0.0
+--------
+2022-01-19: add function is_product_number_existing, add Unit functions, changed some method names
+
 v1.0.2
 --------
-- clean requirements.txt
+2022-01-18: clean requirements.txt
 
 v1.0.1
 --------

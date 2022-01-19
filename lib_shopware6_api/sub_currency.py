@@ -67,8 +67,8 @@ class Currency(object):
             raise FileNotFoundError(f'currency record with isoCode "{currency_iso_code}" not found')
         return currency_id
 
-    # get_currency_l_dict_all{{{
-    def get_currency_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    # get_currencies{{{
+    def get_currencies(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         get all currency records - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -85,9 +85,9 @@ class Currency(object):
 
         >>> # Setup
         >>> my_api = Currency()
-        >>> my_l_dict_data = my_api.get_currency_l_dict_all()
+        >>> my_l_dict_data = my_api.get_currencies()
         """
-        # get_currency_l_dict_all}}}
+        # get_currencies}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="currency", payload=payload)
         l_dict_data = list(dict_response["data"])

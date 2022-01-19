@@ -39,12 +39,12 @@ class DeliveryTime(object):
 
         """
         # cache_clear_delivery_time}}}
-        self.get_delivery_time_l_dict_all.cache_clear()
+        self.get_delivery_times.cache_clear()
         self.get_delivery_times_sorted_by_min_days.cache_clear()
 
-    # get_delivery_time_l_dict_all{{{
+    # get_delivery_times{{{
     @lru_cache(maxsize=None)
-    def get_delivery_time_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_delivery_times(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         get all delivery-time records - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -61,15 +61,15 @@ class DeliveryTime(object):
 
         >>> # Setup
         >>> my_api = DeliveryTime()
-        >>> my_l_dict_data = my_api.get_delivery_time_l_dict_all()
+        >>> my_l_dict_data = my_api.get_delivery_times()
         """
-        # get_delivery_time_l_dict_all}}}
+        # get_delivery_times}}}
         dict_response = self._admin_client.request_get_paginated(request_url="delivery-time", payload=payload)
         l_dict_data = list(dict_response["data"])
         return l_dict_data
 
-    # search_delivery_time_l_dict{{{
-    def search_delivery_time_l_dict(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+    # search_delivery_times{{{
+    def search_delivery_times(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
         """
         search delivery-time records
 
@@ -77,10 +77,10 @@ class DeliveryTime(object):
         >>> my_api = DeliveryTime()
 
         >>> # insert article
-        >>> ignore = my_api.search_delivery_time_l_dict()
+        >>> ignore = my_api.search_delivery_times()
 
         """
-        # search_delivery_time_l_dict}}}
+        # search_delivery_times}}}
         response_dict = self._admin_client.request_post_paginated("search/delivery-time", payload)
         l_data_dict = list(response_dict["data"])
         return l_data_dict
@@ -105,7 +105,7 @@ class DeliveryTime(object):
         days = {"day": 1, "week": 7, "month": 31, "year": 365}
         payload = dal.Criteria()
         payload.includes["delivery_time"] = ["id", "name", "min", "unit"]
-        l_dict_delivery_times = self.search_delivery_time_l_dict(payload=payload)
+        l_dict_delivery_times = self.search_delivery_times(payload=payload)
         l_dict_delivery_times = sorted(l_dict_delivery_times, key=lambda dt: dt["min"] * days[dt["unit"]])  # type: ignore
         position = 10
         for delivery_time in l_dict_delivery_times:

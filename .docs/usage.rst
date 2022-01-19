@@ -7,6 +7,7 @@ Overview
 - `Media`_
 - `Product`_
 - `Tax`_
+- `Unit`_
 
 -------------------
 
@@ -35,8 +36,8 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_currency.py
     :code: python
-    :start-after: # get_currency_l_dict_all{{{
-    :end-before:  # get_currency_l_dict_all}}}
+    :start-after: # get_currencies{{{
+    :end-before:  # get_currencies}}}
 
 DeliveryTime
 ============
@@ -54,13 +55,13 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_delivery_time.py
     :code: python
-    :start-after: # get_delivery_time_l_dict_all{{{
-    :end-before:  # get_delivery_time_l_dict_all}}}
+    :start-after: # get_delivery_times{{{
+    :end-before:  # get_delivery_times}}}
 
 .. include:: ../lib_shopware6_api/sub_delivery_time.py
     :code: python
-    :start-after: # search_delivery_time_l_dict{{{
-    :end-before:  # search_delivery_time_l_dict}}}
+    :start-after: # search_delivery_times{{{
+    :end-before:  # search_delivery_times}}}
 
 .. include:: ../lib_shopware6_api/sub_delivery_time.py
     :code: python
@@ -123,8 +124,8 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
-    :start-after: # get_media_folder_configuration_l_dict_all{{{
-    :end-before:  # get_media_folder_configuration_l_dict_all}}}
+    :start-after: # get_media_folder_configurations{{{
+    :end-before:  # get_media_folder_configurations}}}
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
@@ -148,8 +149,8 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
-    :start-after: # get_media_l_dict_all{{{
-    :end-before:  # get_media_l_dict_all}}}
+    :start-after: # get_medias{{{
+    :end-before:  # get_medias}}}
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
@@ -208,13 +209,13 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
-    :start-after: # search_media_folders_l_dict{{{
-    :end-before:  # search_media_folders_l_dict}}}
+    :start-after: # search_media_folders{{{
+    :end-before:  # search_media_folders}}}
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
-    :start-after: # search_media_l_dict{{{
-    :end-before:  # search_media_l_dict}}}
+    :start-after: # search_medias{{{
+    :end-before:  # search_medias}}}
 
 .. include:: ../lib_shopware6_api/sub_media.py
     :code: python
@@ -287,13 +288,13 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_product.py
     :code: python
-    :start-after: # get_product_l_dict_all{{{
-    :end-before:  # get_product_l_dict_all}}}
+    :start-after: # get_product_medias{{{
+    :end-before:  # get_product_medias}}}
 
 .. include:: ../lib_shopware6_api/sub_product.py
     :code: python
-    :start-after: # get_product_media_l_dict_all{{{
-    :end-before:  # get_product_media_l_dict_all}}}
+    :start-after: # get_products{{{
+    :end-before:  # get_products}}}
 
 .. include:: ../lib_shopware6_api/sub_product.py
     :code: python
@@ -317,8 +318,13 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_product.py
     :code: python
-    :start-after: # search_product_media_l_dict{{{
-    :end-before:  # search_product_media_l_dict}}}
+    :start-after: # is_product_number_existing{{{
+    :end-before:  # is_product_number_existing}}}
+
+.. include:: ../lib_shopware6_api/sub_product.py
+    :code: python
+    :start-after: # search_product_medias{{{
+    :end-before:  # search_product_medias}}}
 
 .. include:: ../lib_shopware6_api/sub_product.py
     :code: python
@@ -346,10 +352,34 @@ back to `Overview`_
 
 .. include:: ../lib_shopware6_api/sub_tax.py
     :code: python
-    :start-after: # get_tax_l_dict_all{{{
-    :end-before:  # get_tax_l_dict_all}}}
+    :start-after: # get_taxes{{{
+    :end-before:  # get_taxes}}}
 
 .. include:: ../lib_shopware6_api/sub_tax.py
     :code: python
     :start-after: # get_tax_rate_by_name{{{
     :end-before:  # get_tax_rate_by_name}}}
+
+Unit
+========
+back to `Overview`_
+
+.. include:: ../lib_shopware6_api/sub_unit.py
+    :code: python
+    :start-after: # Unit{{{
+    :end-before:  # Unit}}}
+
+.. include:: ../lib_shopware6_api/sub_unit.py
+    :code: python
+    :start-after: # cache_clear_unit{{{
+    :end-before:  # cache_clear_unit}}}
+
+.. include:: ../lib_shopware6_api/sub_unit.py
+    :code: python
+    :start-after: # get_units{{{
+    :end-before:  # get_units}}}
+
+.. include:: ../lib_shopware6_api/sub_unit.py
+    :code: python
+    :start-after: # search_units{{{
+    :end-before:  # search_units}}}

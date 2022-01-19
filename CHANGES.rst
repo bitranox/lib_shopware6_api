@@ -5,6 +5,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+v2.0.0
+--------
+2022-01-19: add function is_product_number_existing, add Unit functions, changed some method names
+
 v1.0.2
 --------
 2022-01-18: clean requirements.txt

@@ -176,7 +176,7 @@ class Product(object):
         payload = dal.Criteria()
         payload.page = 1
         payload.limit = 1
-        payload.filter = [dal.EqualsFilter(field="productNumber", value=product_number)]
+        payload.filter = [dal.EqualsFilter(field="productNumber", value=str(product_number))]
         payload.includes = {"product": ["id"]}
 
         dict_response = self._admin_client.request_post(request_url="search/product", payload=payload)
@@ -270,12 +270,37 @@ class Product(object):
         payload = dal.Criteria()
         payload.filter = [dal.EqualsFilter(field="productId", value=product_id)]
         payload.includes = {"product-media": ["id"]}
-        l_dict_product_media = self.search_product_media_l_dict(payload=payload)
+        l_dict_product_media = self.search_product_medias(payload=payload)
         for dict_product_media in l_dict_product_media:
             self.delete_product_media_relation_by_id(product_media_id=dict_product_media["id"])
 
-    # get_product_l_dict_all{{{
-    def get_product_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    # get_product_medias{{{
+    def get_product_medias(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """
+        get all product_media - filters and so on can be set in the payload
+        we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
+
+        :parameters
+            payload, to set filters etc.
+
+        :returns
+            l_dict_data,
+
+        sample payload :
+            page and limit will be overridden by function base_client.request_get_paginated() and will be ignored
+
+        >>> # Setup
+        >>> my_api = Product()
+        >>> my_l_dict_data = my_api.get_product_medias()
+        """
+        # get_product_medias}}}
+
+        dict_response = self._admin_client.request_get_paginated(request_url="product-media", payload=payload)
+        l_dict_data = list(dict_response["data"])
+        return l_dict_data
+
+    # get_products{{{
+    def get_products(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         get all articles back - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -292,38 +317,13 @@ class Product(object):
 
         >>> # Setup
         >>> my_api = Product()
-        >>> dict_data = my_api.get_product_l_dict_all()
+        >>> dict_data = my_api.get_products()
         >>> assert len(dict_data) > 5
 
         """
-        # get_product_l_dict_all}}}
+        # get_products}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="product", payload=payload)
-        l_dict_data = list(dict_response["data"])
-        return l_dict_data
-
-    # get_product_media_l_dict_all{{{
-    def get_product_media_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        """
-        get all product_media - filters and so on can be set in the payload
-        we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
-
-        :parameters
-            payload, to set filters etc.
-
-        :returns
-            l_dict_data,
-
-        sample payload :
-            page and limit will be overridden by function base_client.request_get_paginated() and will be ignored
-
-        >>> # Setup
-        >>> my_api = Product()
-        >>> my_l_dict_data = my_api.get_product_media_l_dict_all()
-        """
-        # get_product_media_l_dict_all}}}
-
-        dict_response = self._admin_client.request_get_paginated(request_url="product-media", payload=payload)
         l_dict_data = list(dict_response["data"])
         return l_dict_data
 
@@ -361,11 +361,11 @@ class Product(object):
 
         >>> # insert article
         >>> my_new_product_id = my_api.insert_product(name='rn-doctest-article', product_number='test_insert_article_by_product_number_999',
-        ...                                           price_brutto=Decimal(0), stock=0)
+        ...                                           price_brutto=Decimal(100), stock=0)
         >>> assert 32 == len(my_new_product_id)
 
         >>> # Teardown
-        >>> my_api.delete_product_by_id(product_id=my_new_product_id)
+        >>> # my_api.delete_product_by_id(product_id=my_new_product_id)
 
         """
         # insert_product}}}
@@ -485,11 +485,36 @@ class Product(object):
         payload.filter = [dal.EqualsFilter(field="mediaId", value=media_id)]
         payload.includes = {"product_media": ["id"]}
 
-        l_product_media = self.search_product_media_l_dict(payload=payload)
+        l_product_media = self.search_product_medias(payload=payload)
         return bool(l_product_media)
 
-    # search_product_media_l_dict{{{
-    def search_product_media_l_dict(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+    # is_product_number_existing{{{
+    def is_product_number_existing(self, product_number: Union[int, str]) -> bool:
+        """
+        :param product_number:
+        :return:
+
+        >>> # Setup
+        >>> my_api = Product()
+        >>> my_new_product_id = my_api.insert_product(name='test_is_product_number_existing', product_number='is_product_number_existing_999')
+
+        >>> # Test
+        >>> assert True == my_api.is_product_number_existing(product_number = 'is_product_number_existing_999')
+        >>> assert False == my_api.is_product_number_existing(product_number = 'product_number_does_not_exist')
+
+        >>> # Teardown
+        >>> my_api.delete_product_by_id(product_id=my_new_product_id)
+
+        """
+        # is_product_number_existing}}}
+        try:
+            self.get_product_id_by_product_number(product_number=product_number)
+            return True
+        except FileNotFoundError:
+            return False
+
+    # search_product_medias{{{
+    def search_product_medias(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
         """
         search product_media
 
@@ -497,10 +522,10 @@ class Product(object):
         >>> my_api = Product()
 
         >>> # insert article
-        >>> ignore = my_api.search_product_media_l_dict()
+        >>> ignore = my_api.search_product_medias()
 
         """
-        # search_product_media_l_dict}}}
+        # search_product_medias}}}
         response_dict = self._admin_client.request_post_paginated("search/product-media", payload)
         l_data_dict = list(response_dict["data"])
         return l_data_dict

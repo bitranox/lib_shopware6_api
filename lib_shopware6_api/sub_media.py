@@ -358,8 +358,8 @@ class Media(object):
             raise FileNotFoundError(f'media folder with name "{media_folder_name}" not found')
         return media_folder_configuration_id
 
-    # get_media_folder_configuration_l_dict_all{{{
-    def get_media_folder_configuration_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    # get_media_folder_configurations{{{
+    def get_media_folder_configurations(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         get all media_folder_configurations - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -375,9 +375,9 @@ class Media(object):
 
         >>> # Setup
         >>> my_api = Media()
-        >>> my_l_dict_data = my_api.get_media_folder_configuration_l_dict_all()
+        >>> my_l_dict_data = my_api.get_media_folder_configurations()
         """
-        # get_media_folder_configuration_l_dict_all}}}
+        # get_media_folder_configurations}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="media-folder-configuration", payload=payload)
         l_dict_data = list(dict_response["data"])
@@ -527,8 +527,8 @@ class Media(object):
         except IndexError:
             raise FileNotFoundError(f'media_filename: "{media_filename_stem}.{media_filename_suffix}" not found')
 
-    # get_media_l_dict_all{{{
-    def get_media_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    # get_medias{{{
+    def get_medias(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         get all media records - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -545,9 +545,9 @@ class Media(object):
 
         >>> # Setup
         >>> my_api = Media()
-        >>> my_l_dict_data = my_api.get_media_l_dict_all()
+        >>> my_l_dict_data = my_api.get_medias()
         """
-        # get_media_l_dict_all}}}
+        # get_medias}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="media", payload=payload)
         l_dict_data = list(dict_response["data"])
@@ -806,7 +806,7 @@ class Media(object):
         payload.page = 1
         payload.filter = [dal.EqualsFilter(field="parentId", value=media_folder_id)]
         payload.includes = {"media_folder": ["id"]}
-        l_media = self.search_media_folders_l_dict(payload=payload)
+        l_media = self.search_media_folders(payload=payload)
         is_subfolder = bool(l_media)
         if not is_subfolder:
             if not self.is_media_folder_existing(media_folder_id=media_folder_id):
@@ -921,7 +921,7 @@ class Media(object):
         payload.page = 1
         payload.filter = [dal.EqualsFilter(field="id", value=media_folder_id)]
         payload.includes = {"media_folder": ["id"]}
-        l_data_dict = self.search_media_folders_l_dict(payload=payload)
+        l_data_dict = self.search_media_folders(payload=payload)
         return bool(l_data_dict)
 
     # is_media_folder_existing_by_path{{{
@@ -992,8 +992,8 @@ class Media(object):
             raise FileNotFoundError(f'media_folder id "{media_folder_id}" not found')
         return bool(l_data_dict)
 
-    # search_media_folders_l_dict{{{
-    def search_media_folders_l_dict(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+    # search_media_folders{{{
+    def search_media_folders(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
         """
         get all the media folders
 
@@ -1001,10 +1001,10 @@ class Media(object):
         >>> my_api = Media()
 
         >>> # test
-        >>> my_l_data_dict = my_api.search_media_folders_l_dict()
+        >>> my_l_data_dict = my_api.search_media_folders()
 
         """
-        # search_media_folders_l_dict}}}
+        # search_media_folders}}}
         if payload is None:
             payload = {}
         # response_dict = self.admin_client.request_post_paginated("search/media-folder", payload)
@@ -1012,8 +1012,8 @@ class Media(object):
         l_dict_data = list(response_dict["data"])
         return l_dict_data
 
-    # search_media_l_dict{{{
-    def search_media_l_dict(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+    # search_medias{{{
+    def search_medias(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
         """
         get all the media
 
@@ -1021,10 +1021,10 @@ class Media(object):
         >>> my_api = Media()
 
         >>> # insert article
-        >>> ignore = my_api.search_media_l_dict()
+        >>> ignore = my_api.search_medias()
 
         """
-        # search_media_l_dict}}}
+        # search_medias}}}
         response_dict = self._admin_client.request_post_paginated("search/media", payload)
         l_data_dict = list(response_dict["data"])
         return l_data_dict

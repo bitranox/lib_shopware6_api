@@ -82,8 +82,8 @@ class Tax(object):
             raise FileNotFoundError(f'tax record with name "{tax_name}" not found')
         return tax_id
 
-    # get_tax_l_dict_all{{{
-    def get_tax_l_dict_all(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    # get_taxes{{{
+    def get_taxes(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         get all tax records - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -100,9 +100,9 @@ class Tax(object):
 
         >>> # Setup
         >>> my_api = Tax()
-        >>> my_l_dict_data = my_api.get_tax_l_dict_all()
+        >>> my_l_dict_data = my_api.get_taxes()
         """
-        # get_tax_l_dict_all}}}
+        # get_taxes}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="tax", payload=payload)
         l_dict_data = list(dict_response["data"])
