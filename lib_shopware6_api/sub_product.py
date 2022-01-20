@@ -369,7 +369,7 @@ class Product(object):
         >>> assert 32 == len(my_new_product_id)
 
         >>> # Teardown
-        >>> # my_api.delete_product_by_id(product_id=my_new_product_id)
+        >>> my_api.delete_product_by_id(product_id=my_new_product_id)
 
         """
         # insert_product}}}
