@@ -7,7 +7,7 @@ Changelog
 
 v2.0.1
 --------
-2022-01-19: update documentation
+2022-01-19: update documentation, enhance coverage
 
 v2.0.0
 --------

@@ -1490,7 +1490,7 @@ back to `Overview`_
             >>> assert 32 == len(my_new_product_id)
 
             >>> # Teardown
-            >>> # my_api.delete_product_by_id(product_id=my_new_product_id)
+            >>> my_api.delete_product_by_id(product_id=my_new_product_id)
 
             """
 
@@ -1937,7 +1937,7 @@ Changelog
 
 v2.0.1
 --------
-2022-01-19: update documentation
+2022-01-19: update documentation, enhance coverage
 
 v2.0.0
 --------
