@@ -2,7 +2,7 @@ lib_shopware6_api
 =================
 
 
-Version v2.0.1 as of 2022-01-20 see `Changelog`_
+Version v2.0.2 as of 2022-03-29 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -1934,6 +1934,10 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v2.0.2
+--------
+2022-03-29: remedy mypy Untyped decorator makes function "cli_info" untyped
 
 v2.0.1
 --------
