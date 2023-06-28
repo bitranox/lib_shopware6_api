@@ -5,6 +5,13 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+v2.0.2.4
+---------
+2023-06-39:
+    - update build matrix
+    - get rid of travis files
+    - get rid of bettercodehub
+
 v2.0.2.3
 ---------
 2022-06-30: specify correct "attr" version in requirements

@@ -9,7 +9,7 @@ from setuptools import setup  # type: ignore
 from setuptools import find_packages
 
 
-def is_travis_deploy() -> bool:
+def is_deploy() -> bool:
     if os.getenv("DEPLOY_SDIST", "") or os.getenv("DEPLOY_WHEEL", ""):
         return is_tagged_commit()
     else:
@@ -77,14 +77,14 @@ install_requires = get_requirements_from_file("requirements.txt")
 setup_requires = list(set(tests_require + install_requires))
 
 # for deploy on pypi we must not rely on imports from github
-if is_travis_deploy() and is_tagged_commit():
+if is_deploy() and is_tagged_commit():
     setup_requires = strip_links_from_required(setup_requires)
     tests_require = strip_links_from_required(tests_require)
     install_requires = strip_links_from_required(install_requires)
 
 setup_kwargs: Dict[str, Any] = dict()
 setup_kwargs["name"] = "lib_shopware6_api"
-setup_kwargs["version"] = "v2.0.2.3"
+setup_kwargs["version"] = "v2.0.2.4"
 setup_kwargs["url"] = "https://github.com/bitranox/lib_shopware6_api"
 setup_kwargs["packages"] = find_packages()
 setup_kwargs["package_data"] = {"lib_shopware6_api": ["py.typed", "*.pyi", "__init__.pyi"]}
@@ -110,7 +110,7 @@ setup_kwargs["install_requires"] = install_requires
 # minimally needs to run the setup script, dependencies needs also to put here for "setup.py install test"
 # dependencies must not be put here for pip install
 setup_kwargs["setup_requires"] = setup_requires
-setup_kwargs["python_requires"] = ">=3.6.0"
+setup_kwargs["python_requires"] = ">=3.7.0"
 setup_kwargs["zip_safe"] = False
 
 

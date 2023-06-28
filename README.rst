@@ -2,11 +2,11 @@ lib_shopware6_api
 =================
 
 
-Version v2.0.2.3 as of 2022-06-30 see `Changelog`_
+Version v2.0.2.4 as of 2023-06-29 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
-|codecov| |better_code| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
+|codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
 
 
 
@@ -26,9 +26,6 @@ Version v2.0.2.3 as of 2022-06-30 see `Changelog`_
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/bitranox/lib_shopware6_api
    :target: https://codecov.io/gh/bitranox/lib_shopware6_api
-
-.. |better_code| image:: https://bettercodehub.com/edge/badge/bitranox/lib_shopware6_api?branch=master
-   :target: https://bettercodehub.com/results/bitranox/lib_shopware6_api
 
 .. |cc_maintain| image:: https://img.shields.io/codeclimate/maintainability-percentage/bitranox/lib_shopware6_api?label=CC%20maintainability
    :target: https://codeclimate.com/github/bitranox/lib_shopware6_api/maintainability
@@ -58,14 +55,14 @@ this might be a good example for Your own API Client Functions - to be further e
 
 ----
 
-automated tests, Travis Matrix, Documentation, Badges, etc. are managed with `PizzaCutter <https://github
+automated tests, Github Actions, Documentation, Badges, etc. are managed with `PizzaCutter <https://github
 .com/bitranox/PizzaCutter>`_ (cookiecutter on steroids)
 
-Python version required: 3.6.0 or newer
+Python version required: 3.7.0 or newer
 
-tested on recent linux with python 3.6, 3.7, 3.8, 3.9, 3.10, pypy-3.8 - architectures: amd64
+tested on recent linux with python 3.7, 3.8, 3.9, 3.10, 3.11, pypy-3.9 - architectures: amd64
 
-`100% code coverage <https://codecov.io/gh/bitranox/lib_shopware6_api>`_, flake8 style checking ,mypy static type checking ,
+`100% code coverage <https://codeclimate.com/github/bitranox/lib_shopware6_api/test_coverage>`_, flake8 style checking ,mypy static type checking ,tested under `Linux <https://github.com/bitranox/lib_shopware6_api/actions/workflows/python-package.yml>`_, automatic daily builds and monitoring
 
 ----
 
@@ -1934,6 +1931,13 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v2.0.2.4
+---------
+2023-06-39:
+    - update build matrix
+    - get rid of travis files
+    - get rid of bettercodehub
 
 v2.0.2.3
 ---------

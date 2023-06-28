@@ -1,6 +1,6 @@
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
-|codecov| |better_code| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
+|codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
 
 
 
@@ -20,9 +20,6 @@
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/bitranox/lib_shopware6_api
    :target: https://codecov.io/gh/bitranox/lib_shopware6_api
-
-.. |better_code| image:: https://bettercodehub.com/edge/badge/bitranox/lib_shopware6_api?branch=master
-   :target: https://bettercodehub.com/results/bitranox/lib_shopware6_api
 
 .. |cc_maintain| image:: https://img.shields.io/codeclimate/maintainability-percentage/bitranox/lib_shopware6_api?label=CC%20maintainability
    :target: https://codeclimate.com/github/bitranox/lib_shopware6_api/maintainability
