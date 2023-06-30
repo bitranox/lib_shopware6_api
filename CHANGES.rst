@@ -7,10 +7,16 @@ Changelog
 
 v2.0.2.4
 ---------
-2023-06-39:
-    - update build matrix
-    - get rid of travis files
-    - get rid of bettercodehub
+2023-06-30:
+    - update black config
+    - remove travis config
+    - remove bettercodehub config
+    - do not upload .egg files to pypi.org
+    - update github actions : checkout@v3 and setup-python@v4
+    - remove "better code" badges
+    - remove python 3.6 tests
+    - adding python 3.11 tests
+    - update pypy tests to 3.9
 
 v2.0.2.3
 ---------
