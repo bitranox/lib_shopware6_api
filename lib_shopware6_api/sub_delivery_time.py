@@ -98,11 +98,11 @@ class DeliveryTime(object):
 
         >>> # Test
         >>> my_api.get_delivery_times_sorted_by_min_days()
-        [{'name': '...', 'id': '...', 'position': 10}, ...]x
+        [{'name': '...', 'id': '...', 'position': 10}, ...]
 
         """
         # get_delivery_times_sorted_by_min_days}}}
-        days = {"hour": 0, "day": 1, "week": 7, "month": 31, "year": 365}
+        days = {"hour": 0.0416667, "day": 1, "week": 7, "month": 31, "year": 365}
         payload = dal.Criteria()
         payload.includes["delivery_time"] = ["id", "name", "min", "unit"]
         l_dict_delivery_times = self.search_delivery_times(payload=payload)
