@@ -2,7 +2,7 @@ lib_shopware6_api
 =================
 
 
-Version v2.0.3 as of 2023-07-13 see `Changelog`_
+Version v2.0.4 as of 2023-07-13 see `Changelog`_
 
 
 .. include:: ./badges.rst
@@ -14,7 +14,7 @@ Version v2.0.3 as of 2023-07-13 see `Changelog`_
 automated tests, Github Actions, Documentation, Badges, etc. are managed with `PizzaCutter <https://github
 .com/bitranox/PizzaCutter>`_ (cookiecutter on steroids)
 
-Python version required: 3.7.0 or newer
+Python version required: 3.8.0 or newer
 
 .. include:: ./tested_under.rst
 
