@@ -2,7 +2,7 @@ lib_shopware6_api
 =================
 
 
-Version v2.0.2.4 as of 2023-06-29 see `Changelog`_
+Version v2.0.3 as of 2023-07-13 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -39,7 +39,7 @@ Version v2.0.2.4 as of 2023-06-29 see `Changelog`_
    :target: https://codeclimate.com/github/bitranox/lib_shopware6_api/test_coverage
    :alt: Code Coverage
 
-.. |snyk| image:: https://img.shields.io/snyk/vulnerabilities/github/bitranox/lib_shopware6_api
+.. |snyk| image:: https://snyk.io/test/github/bitranox/lib_shopware6_api/badge.svg
    :target: https://snyk.io/test/github/bitranox/lib_shopware6_api
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
@@ -1840,6 +1840,13 @@ Installation and Upgrade
 
     python -m pip install --upgrade lib_shopware6_api
 
+
+- to install the latest release from PyPi via pip, including test dependencies:
+
+.. code-block::
+
+    python -m pip install --upgrade lib_shopware6_api[test]
+
 - to install the latest version from github via pip:
 
 
@@ -1863,14 +1870,14 @@ Installation and Upgrade
     python -m pip install --upgrade -r /<path>/requirements.txt
 
 
-- to install the latest development version from source code:
+- to install the latest development version, including test dependencies from source code:
 
 .. code-block::
 
     # cd ~
     $ git clone https://github.com/bitranox/lib_shopware6_api.git
     $ cd lib_shopware6_api
-    python setup.py install
+    python -m pip install -e .[test]
 
 - via makefile:
   makefiles are a very convenient way to install. Here we can do much more,
@@ -1932,12 +1939,28 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+v2.0.3
+---------
+2023-07-13:
+    - introduce PEP517 packaging standard
+    - introduce pyproject.toml build-system
+    - remove setup.cfg
+    - remove setup.py
+    - update black config
+    - clean ./tests/test_cli.py
+
 v2.0.2.4
 ---------
-2023-06-39:
-    - update build matrix
-    - get rid of travis files
-    - get rid of bettercodehub
+2023-06-30:
+    - update black config
+    - remove travis config
+    - remove bettercodehub config
+    - do not upload .egg files to pypi.org
+    - update github actions : checkout@v3 and setup-python@v4
+    - remove "better code" badges
+    - remove python 3.6 tests
+    - adding python 3.11 tests
+    - update pypy tests to 3.9
 
 v2.0.2.3
 ---------

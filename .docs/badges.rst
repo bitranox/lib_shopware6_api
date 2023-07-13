@@ -33,7 +33,7 @@
    :target: https://codeclimate.com/github/bitranox/lib_shopware6_api/test_coverage
    :alt: Code Coverage
 
-.. |snyk| image:: https://img.shields.io/snyk/vulnerabilities/github/bitranox/lib_shopware6_api
+.. |snyk| image:: https://snyk.io/test/github/bitranox/lib_shopware6_api/badge.svg
    :target: https://snyk.io/test/github/bitranox/lib_shopware6_api
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
