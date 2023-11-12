@@ -9,8 +9,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ShopwareAPIError, ConfShopware6ApiBase, PayLoad
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
 
-PathMedia = Union[str, PathLike[Any], pathlib.Path]
-PathMediaFolder = Union[str, PathLike[Any], pathlib.Path]
+PathMedia = Union[str, "PathLike[Any]", pathlib.Path]
+PathMediaFolder = Union[str, "PathLike[Any]", pathlib.Path]
 
 
 # Media{{{
