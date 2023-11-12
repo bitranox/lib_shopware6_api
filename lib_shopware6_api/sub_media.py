@@ -3,7 +3,8 @@ from decimal import Decimal
 from functools import lru_cache
 import hashlib
 import logging
-from os import PathLike
+import os
+# from os import PathLike
 import pathlib
 import sys
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -12,8 +13,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ShopwareAPIError, ConfShopware6ApiBase, PayLoad
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
 
-PathMedia = Union[str, PathLike, pathlib.Path]
-PathMediaFolder = Union[str, PathLike, pathlib.Path]
+PathMedia = Union[str, os.PathLike, pathlib.Path]
+PathMediaFolder = Union[str, os.PathLike, pathlib.Path]
 
 
 # Media{{{
