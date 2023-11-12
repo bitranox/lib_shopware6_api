@@ -9,11 +9,12 @@ from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ShopwareAPIError, ConfShopware6ApiBase, PayLoad
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
 
+# fix Pathlike mypy error
+# see : https://stackoverflow.com/questions/55076778/why-isnt-this-function-type-annotated-correctly-error-missing-type-parameters
 if TYPE_CHECKING:
     BasePathLike = PathLike[Any]
 else:
     BasePathLike = PathLike
-
 
 PathMedia = Union[str, BasePathLike, pathlib.Path]
 PathMediaFolder = Union[str, BasePathLike, pathlib.Path]
