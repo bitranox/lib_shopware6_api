@@ -20,7 +20,10 @@
 .. |pypi| image:: https://img.shields.io/pypi/status/lib-shopware6-api?label=PyPI%20Package
    :target: https://badge.fury.io/py/lib_shopware6_api
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/bitranox/lib_shopware6_api
+.. badge until 2023-10-08:
+.. https://img.shields.io/codecov/c/github/bitranox/lib_shopware6_api
+.. badge from 2023-10-08:
+.. |codecov| image:: https://codecov.io/gh/bitranox/lib_shopware6_api/graph/badge.svg
    :target: https://codecov.io/gh/bitranox/lib_shopware6_api
 
 .. |cc_maintain| image:: https://img.shields.io/codeclimate/maintainability-percentage/bitranox/lib_shopware6_api?label=CC%20maintainability

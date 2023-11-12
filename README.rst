@@ -2,7 +2,7 @@ lib_shopware6_api
 =================
 
 
-Version v2.0.5 as of 2023-07-14 see `Changelog`_
+Version v2.0.6 as of 2023-11-13 see `Changelog`_
 
 |build_badge| |codeql| |license| |jupyter| |pypi|
 |pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
@@ -26,7 +26,10 @@ Version v2.0.5 as of 2023-07-14 see `Changelog`_
 .. |pypi| image:: https://img.shields.io/pypi/status/lib-shopware6-api?label=PyPI%20Package
    :target: https://badge.fury.io/py/lib_shopware6_api
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/bitranox/lib_shopware6_api
+.. badge until 2023-10-08:
+.. https://img.shields.io/codecov/c/github/bitranox/lib_shopware6_api
+.. badge from 2023-10-08:
+.. |codecov| image:: https://codecov.io/gh/bitranox/lib_shopware6_api/graph/badge.svg
    :target: https://codecov.io/gh/bitranox/lib_shopware6_api
 
 .. |cc_maintain| image:: https://img.shields.io/codeclimate/maintainability-percentage/bitranox/lib_shopware6_api?label=CC%20maintainability
@@ -1940,6 +1943,11 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v2.0.6
+---------
+2023-11-13:
+    - fix mypy error for PathLike
 
 v2.0.5
 ---------

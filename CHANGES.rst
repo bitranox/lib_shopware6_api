@@ -5,6 +5,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+v2.0.6
+---------
+2023-11-13:
+    - fix mypy error for PathLike
+
 v2.0.5
 ---------
 2023-07-14:
