@@ -1,20 +1,16 @@
 # STDLIB
-from decimal import Decimal
 from functools import lru_cache
 import hashlib
-import logging
-import os
-# from os import PathLike
+from os import PathLike
 import pathlib
-import sys
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 # OWN
 from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ShopwareAPIError, ConfShopware6ApiBase, PayLoad
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
 
-PathMedia = Union[str, os.PathLike, pathlib.Path]
-PathMediaFolder = Union[str, os.PathLike, pathlib.Path]
+PathMedia = Union[str, PathLike[Any], pathlib.Path]
+PathMediaFolder = Union[str, PathLike[Any], pathlib.Path]
 
 
 # Media{{{
