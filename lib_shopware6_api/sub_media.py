@@ -3,14 +3,20 @@ from functools import lru_cache
 import hashlib
 from os import PathLike
 import pathlib
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
 # OWN
 from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ShopwareAPIError, ConfShopware6ApiBase, PayLoad
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
 
-PathMedia = Union[str, "PathLike[Any]", pathlib.Path]
-PathMediaFolder = Union[str, "PathLike[Any]", pathlib.Path]
+if TYPE_CHECKING:
+    BasePathLike = PathLike[Any]
+else:
+    BasePathLike = PathLike
+
+
+PathMedia = Union[str, BasePathLike, pathlib.Path]
+PathMediaFolder = Union[str, BasePathLike, pathlib.Path]
 
 
 # Media{{{
