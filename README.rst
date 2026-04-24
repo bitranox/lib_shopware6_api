@@ -5,7 +5,7 @@ lib_shopware6_api
 Version v2.0.6 as of 2023-11-13 see `Changelog`_
 
 |build_badge| |codeql| |license| |jupyter| |pypi|
-|pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
+|pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage|
 
 
 
@@ -44,8 +44,6 @@ Version v2.0.6 as of 2023-11-13 see `Changelog`_
    :target: https://codeclimate.com/github/bitranox/lib_shopware6_api/test_coverage
    :alt: Code Coverage
 
-.. |snyk| image:: https://snyk.io/test/github/bitranox/lib_shopware6_api/badge.svg
-   :target: https://snyk.io/test/github/bitranox/lib_shopware6_api
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
