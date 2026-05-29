@@ -4,3 +4,4 @@ click
 cli_exit_tools
 lib_detect_testenv
 lib_shopware6_api_base
+urllib3>=2.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
