@@ -1,16 +1,21 @@
 # STDLIB
-from functools import lru_cache
-from typing import Any, Dict, List, Optional
+from functools import cache
+from typing import Any
 
 # OWN
-from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ConfShopware6ApiBase, PayLoad
+from lib_shopware6_api_base import ConfShopware6ApiBase, PayLoad, Shopware6AdminAPIClientBase
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
+
+from ._conf_helper import resolve_config
 
 
 # DeliveryTime{{{
-class DeliveryTime(object):
+class DeliveryTime:
     def __init__(
-        self, admin_client: Optional[Shopware6AdminAPIClientBase] = None, config: Optional[ConfShopware6ApiBase] = None, use_docker_test_container: bool = False
+        self,
+        admin_client: Shopware6AdminAPIClientBase | None = None,
+        config: ConfShopware6ApiBase | None = None,
+        use_docker_test_container: bool = False,
     ) -> None:
         """
         :param admin_client:
@@ -23,7 +28,7 @@ class DeliveryTime(object):
         """
         # DeliveryTime}}}
         if admin_client is None:
-            self._admin_client = Shopware6AdminAPIClientBase(config=config, use_docker_test_container=use_docker_test_container)
+            self._admin_client = Shopware6AdminAPIClientBase(config=resolve_config(config, use_docker_test_container))
         else:
             self._admin_client = admin_client
 
@@ -43,8 +48,8 @@ class DeliveryTime(object):
         self.get_delivery_times_sorted_by_min_days.cache_clear()
 
     # get_delivery_times{{{
-    @lru_cache(maxsize=None)
-    def get_delivery_times(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    @cache
+    def get_delivery_times(self, payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         get all delivery-time records - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -69,7 +74,7 @@ class DeliveryTime(object):
         return l_dict_data
 
     # search_delivery_times{{{
-    def search_delivery_times(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+    def search_delivery_times(self, payload: PayLoad = None) -> list[dict[str, Any]]:
         """
         search delivery-time records
 
@@ -86,8 +91,8 @@ class DeliveryTime(object):
         return l_data_dict
 
     # get_delivery_times_sorted_by_min_days{{{
-    @lru_cache(maxsize=None)
-    def get_delivery_times_sorted_by_min_days(self) -> List[Dict[str, Any]]:
+    @cache
+    def get_delivery_times_sorted_by_min_days(self) -> list[dict[str, Any]]:
         """
         returns a list of 'id' and 'name' of delivery_times, sorted by minimal time
         the key 'position' starts with 10, 20 ....

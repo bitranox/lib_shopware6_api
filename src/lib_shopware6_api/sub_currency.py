@@ -1,22 +1,21 @@
 # STDLIB
-from decimal import Decimal
-from functools import lru_cache
-import hashlib
-import logging
-from os import PathLike
-import pathlib
-import sys
-from typing import Any, Dict, List, Optional, Tuple, Union
+from functools import cache
+from typing import Any
 
 # OWN
-from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ShopwareAPIError, ConfShopware6ApiBase, PayLoad
+from lib_shopware6_api_base import ConfShopware6ApiBase, Shopware6AdminAPIClientBase
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
+
+from ._conf_helper import resolve_config
 
 
 # Currency{{{
-class Currency(object):
+class Currency:
     def __init__(
-        self, admin_client: Optional[Shopware6AdminAPIClientBase] = None, config: Optional[ConfShopware6ApiBase] = None, use_docker_test_container: bool = False
+        self,
+        admin_client: Shopware6AdminAPIClientBase | None = None,
+        config: ConfShopware6ApiBase | None = None,
+        use_docker_test_container: bool = False,
     ) -> None:
         """
         >>> # Setup
@@ -24,12 +23,12 @@ class Currency(object):
         """
         # Currency}}}
         if admin_client is None:
-            self._admin_client = Shopware6AdminAPIClientBase(config=config, use_docker_test_container=use_docker_test_container)
+            self._admin_client = Shopware6AdminAPIClientBase(config=resolve_config(config, use_docker_test_container))
         else:
             self._admin_client = admin_client
 
     # get_currency_id_by_iso_code{{{
-    @lru_cache(maxsize=None)
+    @cache
     def get_currency_id_by_iso_code(self, currency_iso_code: str = "EUR") -> str:
         """
         :param currency_iso_code: the currency iso code, like 'EUR', 'CHF', ...
@@ -64,11 +63,11 @@ class Currency(object):
         try:
             currency_id = str(dict_response["data"][0]["id"])
         except IndexError:
-            raise FileNotFoundError(f'currency record with isoCode "{currency_iso_code}" not found')
+            raise FileNotFoundError(f'currency record with isoCode "{currency_iso_code}" not found') from None
         return currency_id
 
     # get_currencies{{{
-    def get_currencies(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_currencies(self, payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         get all currency records - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()

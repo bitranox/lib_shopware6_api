@@ -1,46 +1,44 @@
 # STDLIB
-from decimal import Decimal
-from functools import lru_cache
 import hashlib
-from typing import Any, Dict, List, Optional, Tuple, Union
+from decimal import Decimal
+from functools import cache
+from typing import Any
 
 # EXT
-import attrs
+import pydantic
 
 # OWN
-from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ShopwareAPIError, ConfShopware6ApiBase, PayLoad
+from lib_shopware6_api_base import ConfShopware6ApiBase, PayLoad, Shopware6AdminAPIClientBase
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
 
 # PROJ
-try:
-    from sub_currency import Currency
-    from sub_tax import Tax
-    from sub_media import Media
-except ImportError:  # pragma: no cover
-    from .sub_currency import Currency  # type: ignore # pragma: no cover
-    from .sub_tax import Tax  # type: ignore # pragma: no cover
-    from .sub_media import Media  # type: ignore # pragma: no cover
+from ._conf_helper import resolve_config
+from .sub_currency import Currency
+from .sub_media import Media
+from .sub_tax import Tax
 
 
 # ProductPicture{{{
-@attrs.define
-class ProductPicture:
+class ProductPicture(pydantic.BaseModel):
     """
-    dataclass to upsert a picture
+    model to upsert a picture
     """
 
     # ProductPicture}}}
     position: int = 0  # the position in the shop
     url: str = ""  # the url to upload from
-    media_alt: Optional[str] = None  # optional picture alt
-    media_title: Optional[str] = None  # optional picture title
+    media_alt: str | None = None  # optional picture alt
+    media_title: str | None = None  # optional picture title
     upload_media: bool = True  # if to upload the media (default= True)
 
 
 # Product{{{
-class Product(object):
+class Product:
     def __init__(
-        self, admin_client: Optional[Shopware6AdminAPIClientBase] = None, config: Optional[ConfShopware6ApiBase] = None, use_docker_test_container: bool = False
+        self,
+        admin_client: Shopware6AdminAPIClientBase | None = None,
+        config: ConfShopware6ApiBase | None = None,
+        use_docker_test_container: bool = False,
     ) -> None:
         """
         :param admin_client:
@@ -53,7 +51,7 @@ class Product(object):
         """
         # Product}}}
         if admin_client is None:
-            self._admin_client = Shopware6AdminAPIClientBase(config=config, use_docker_test_container=use_docker_test_container)
+            self._admin_client = Shopware6AdminAPIClientBase(config=resolve_config(config, use_docker_test_container))
         else:
             self._admin_client = admin_client
 
@@ -63,7 +61,7 @@ class Product(object):
 
     # calc_new_product_id{{{
     @staticmethod
-    def calc_new_product_id(product_number: Union[int, str]) -> str:
+    def calc_new_product_id(product_number: int | str) -> str:
         """
         :param product_number:
         :return: the new id
@@ -78,7 +76,7 @@ class Product(object):
 
         """
         # calc_new_product_id}}}
-        media_id = hashlib.md5(str(product_number).encode("utf-8")).hexdigest()
+        media_id = hashlib.md5(str(product_number).encode("utf-8"), usedforsecurity=False).hexdigest()
         return media_id
 
     # calc_new_product_media_id{{{
@@ -102,7 +100,7 @@ class Product(object):
         """
         # calc_new_product_media_id}}}
         hash_string = f"{product_id}{position}"
-        media_id = hashlib.md5(hash_string.encode("utf-8")).hexdigest()
+        media_id = hashlib.md5(hash_string.encode("utf-8"), usedforsecurity=False).hexdigest()
         return media_id
 
     # cache_clear_product{{{
@@ -139,8 +137,8 @@ class Product(object):
         self.cache_clear_product()
 
     # get_product_id_by_product_number{{{
-    @lru_cache(maxsize=None)
-    def get_product_id_by_product_number(self, product_number: Union[int, str]) -> str:
+    @cache
+    def get_product_id_by_product_number(self, product_number: int | str) -> str:
         """
         :param product_number:
         :return:
@@ -184,7 +182,7 @@ class Product(object):
             article_id = str(dict_response["data"][0]["id"])
             self.get_product_id_by_product_number.cache_clear()
         except IndexError:
-            raise FileNotFoundError(f'article with productNumber(mysql_artikelnummer) "{product_number}" not found')
+            raise FileNotFoundError(f'article with productNumber(mysql_artikelnummer) "{product_number}" not found') from None
         return article_id
 
     # delete_product_media_relation_by_id{{{
@@ -220,7 +218,7 @@ class Product(object):
         self._admin_client.request_delete(f"product-media/{product_media_id}")
 
     # delete_product_media_relations_by_product_number{{{
-    def delete_product_media_relations_by_product_number(self, product_number: Union[int, str]) -> None:
+    def delete_product_media_relations_by_product_number(self, product_number: int | str) -> None:
         """
         Delete all product_media relations of a product , but not the media itself,
         because there will be a reorg which deletes unused pictures.
@@ -279,7 +277,7 @@ class Product(object):
             self.delete_product_media_relation_by_id(product_media_id=dict_product_media["id"])
 
     # get_product_medias{{{
-    def get_product_medias(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_product_medias(self, payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         get all product_media - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -304,7 +302,7 @@ class Product(object):
         return l_dict_data
 
     # get_products{{{
-    def get_products(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_products(self, payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         get all articles back - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -335,7 +333,7 @@ class Product(object):
     def insert_product(
         self,
         name: str,
-        product_number: Union[int, str],
+        product_number: int | str,
         stock: int = 0,
         price_brutto: Decimal = Decimal("0.00"),
         price_netto: Decimal = Decimal("0.00"),
@@ -394,7 +392,7 @@ class Product(object):
         return new_product_id
 
     # upsert_product_payload{{{
-    def upsert_product_payload(self, product_number: Union[int, str], payload: Dict[str, Any]) -> str:
+    def upsert_product_payload(self, product_number: int | str, payload: dict[str, Any]) -> str:
         # upsert_product_payload}}}
         try:
             product_id = self.get_product_id_by_product_number(product_number=product_number)
@@ -405,10 +403,10 @@ class Product(object):
             self._insert_product_payload(product_id=product_id, payload=payload)
         return product_id
 
-    def _update_product_payload(self, product_id: str, payload: Dict[str, Any]) -> None:
+    def _update_product_payload(self, product_id: str, payload: dict[str, Any]) -> None:
         self._admin_client.request_patch(f"product/{product_id}", payload)
 
-    def _insert_product_payload(self, product_id: str, payload: Dict[str, Any]) -> None:
+    def _insert_product_payload(self, product_id: str, payload: dict[str, Any]) -> None:
         payload["id"] = product_id
         self._admin_client.request_post("product", payload)
         self.cache_clear_product()
@@ -493,7 +491,7 @@ class Product(object):
         return bool(l_product_media)
 
     # is_product_number_existing{{{
-    def is_product_number_existing(self, product_number: Union[int, str]) -> bool:
+    def is_product_number_existing(self, product_number: int | str) -> bool:
         """
         :param product_number:
         :return:
@@ -518,7 +516,7 @@ class Product(object):
             return False
 
     # search_product_medias{{{
-    def search_product_medias(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+    def search_product_medias(self, payload: PayLoad = None) -> list[dict[str, Any]]:
         """
         search product_media
 
@@ -535,7 +533,7 @@ class Product(object):
         return l_data_dict
 
     # upsert_product_pictures{{{
-    def upsert_product_pictures(self, product_number: Union[int, str], l_product_pictures: List[ProductPicture]) -> None:
+    def upsert_product_pictures(self, product_number: int | str, l_product_pictures: list[ProductPicture]) -> None:
         """
         upsert product pictures and cover picture. The first picture (by Position Number) is automatically the cover picture
 
@@ -581,7 +579,9 @@ class Product(object):
                 media_title=product_picture.media_title,
                 upload_media=True,
             )
-            media_relation_id = self.insert_product_media_relation(product_id=product_id, media_id=media_id, position=product_picture.position)
+            media_relation_id = self.insert_product_media_relation(
+                product_id=product_id, media_id=media_id, position=product_picture.position
+            )
 
             if is_cover_picture:
                 self._update_product_payload(product_id=product_id, payload={"coverId": media_relation_id})

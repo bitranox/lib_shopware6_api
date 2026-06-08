@@ -1,101 +1,197 @@
-[build-system]
-requires = ['setuptools', 'setuptools-scm']
-build-backend = "setuptools.build_meta"
-
 [project]
-# see: https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 name = "lib_shopware6_api"
-authors = [
-    {name = "Robert Nowotny", email = "bitranox@gmail.com"},
-]
-description = "use the shopware 6 api"
-readme = "README.rst"
-requires-python = ">=3.8.0"
-keywords = [
+version = "3.0.0"
+description = "python3 higher-level API client for shopware6"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "lib_shopware6_api_base>=4.0.0",
+    "lib_cli_exit_tools>=2.3.1",
+    "lib_log_rich>=6.3.4",
+    "pydantic>=2.13.4",
+    "rich-click",
+    "orjson",
 ]
 license = {text = "MIT"}
+authors = [{ name = "bitranox", email = "bitranox@gmail.com" }]
+keywords = ["shopware", "api"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "License :: OSI Approved :: MIT License",
+  "Environment :: Console",
+  "Operating System :: OS Independent",
+  "Typing :: Typed",
 ]
-# dependencies - former setup.cfg "install_requires"
-# see: https://setuptools.pypa.io/en/latest/userguide/dependency_management.html
-dependencies = [
-    "attrs>=21.3.0",
-    "cli_exit_tools",
-    "click",
-    "lib_detect_testenv",
-    "lib_shopware6_api_base",
-]
-version = "v2.0.6"
-# seems to be not allowed anymore
-# zip-save = false
-
 [project.urls]
 Homepage = "https://github.com/bitranox/lib_shopware6_api"
-Documentation = "https://github.com/bitranox/lib_shopware6_api/blob/master/README.rst"
+Documentation = "https://github.com/bitranox/lib_shopware6_api/blob/master/README.md"
 Repository = "https://github.com/bitranox/lib_shopware6_api.git"
-Changelog = "https://github.com/bitranox/lib_shopware6_api/blob/master/CHANGES.rst"
+Changelog = "https://github.com/bitranox/lib_shopware6_api/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
-test = [
-    "black",
-    "codecov",
-    "coloredlogs",
-    "coverage",
-    "flake8",
-    "mypy",
-    "pytest",
-    "pytest-cov",
-    "pytest-runner",
-    "readme_renderer",
+dev = [
+  "pytest>=9.0.3",
+  "pytest-cov>=7.1.0",
+  "hypothesis>=6.155.2",
+  "ruff>=0.15.16",
+  "pyright[nodejs]>=1.1.410",
+  "bandit>=1.9.4",
+  "build>=1.5.0",
+  "twine>=6.2.0",
+  "codecov-cli>=11.2.8",
+  "pip-audit>=2.10.0",
+  "textual>=8.2.7",
+  "import-linter>=2.11",
+  "rtoml>=0.13.0",
+  # Transitive CVE pins
+  "jaraco-context>=6.1.2",       # CVE-2025-23949
+  "python-multipart>=0.0.32",    # CVE-2025-24486, CVE-2026-40347, CVE-2026-42561
+  "wheel>=0.47.0",               # CVE-2025-24049
+  "pynacl>=1.6.2",               # CVE-2025-69277
+  "urllib3>=2.7.0",              # CVE-2025-66471, CVE-2025-66418
+  "virtualenv>=21.4.2",         # CVE-2025-22702
 ]
 
 [project.scripts]
-    lib_shopware6_api = "lib_shopware6_api.lib_shopware6_api_cli:cli_main"
+lib_shopware6_api = "lib_shopware6_api.lib_shopware6_api_cli:main"
+lib-shopware6-api = "lib_shopware6_api.lib_shopware6_api_cli:main"
 
-[tool.setuptools.package-data]
-lib_shopware6_api = [
-    "*.pyi",
-    "__init__.pyi",
-    "py.typed",
+[build-system]
+requires = ["hatchling>=1.30.1"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lib_shopware6_api"]
+include = [
+    "src/lib_shopware6_api/py.typed",
 ]
 
-[tool.black]
-line-length = 160
-#You should include all Python versions that you want your code to run under
-target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
-# Note that you have to use single-quoted strings in TOML for regular expressions
-include = '\.pyi?$'
-exclude = '/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist)/'
+[tool.ruff]
+line-length = 130
+target-version = "py310"
 
-[tool.mypy]
-verbosity=0
-warn_unused_configs = true
-ignore_missing_imports = true
-no_implicit_optional = true
-no_strict_optional = true
-show_error_context = true
+[tool.ruff.lint]
+select = [
+  "E", "W",     # pycodestyle
+  "F",           # pyflakes
+  "I",           # isort
+  "N",           # pep8-naming
+  "UP",          # pyupgrade
+  "B",           # bugbear
+  "A",           # builtins shadowing
+  "C4",          # comprehension simplification
+  "SIM",         # simplification
+  "TCH",         # type-checking imports
+  "RUF",         # ruff-specific
+  "G",           # logging format (catches f-string in logger)
+  "T20",         # print statements
+  "PTH",         # pathlib preference
+  "PLC", "PLE",  # pylint conventions/errors
+  "S",           # flake8-bandit security checks
+  "PERF",        # performance anti-patterns
+  "ERA",         # eradicate dead/commented-out code
+  "FBT",         # boolean trap (boolean positional args)
+  "PLR",         # pylint refactor
+  "PLW",         # pylint warnings
+]
+ignore = [
+  "RUF002",    # ambiguous unicode characters in docstrings (en-dash) - typography choice
+  "RUF022",    # unsorted __all__ - kept in logical grouping order
+  "PLC0415",   # deferred imports inside functions - circular import prevention
+  "PLC0414",   # import alias does not rename - intentional for explicit re-exports (X as X)
+  "TC001",     # stdlib imports at runtime - needed, not just for type hints
+  "TC002",     # third-party imports at runtime - needed, not just for type hints
+  "TC003",     # stdlib imports - same as TC001
+  "TC006",     # cast() type expressions
+  "N815",      # mixedCase variable names - required by Shopware API (naturalSorting field)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+# Tests: assert is standard, test fixtures have passwords, magic values are clearer inline, temp paths are fine
+"tests/**/*.py" = ["T20", "S101", "S105", "S106", "S108", "S603", "S607", "FBT001", "FBT003", "PLR0913", "PLR2004", "PLW1510", "G004", "E501"]
+# CLI module: boolean flags from click decorators, exception mapper with multiple returns
+"src/lib_shopware6_api/lib_shopware6_api_cli.py" = ["FBT001", "PLR0911"]
+# Facade + resource modules: thin wrappers over the base client; long doctest lines, many params,
+# Shopware payload dicts with magic values, and helper methods that fan out per resource.
+"src/lib_shopware6_api/lib_shopware6_api.py" = ["PLR0913", "E501", "FBT001", "FBT002"]
+# Resource modules: thin API wrappers — long lines, many params, magic Shopware payload
+# values, boolean flags, and intentional per-instance memoization (B019) of lookup methods.
+"src/lib_shopware6_api/sub_*.py" = ["PLR0913", "PLR0912", "PLR0915", "PLR2004", "E501", "FBT001", "FBT002", "C901", "B019"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+extraPaths = [
+  "src",
+]
+# Suppress errors for untyped Shopware API response dicts and third-party libs without complete stubs
+reportUnknownMemberType = "warning"
+reportUnknownVariableType = "warning"
+reportUnknownArgumentType = "warning"
+reportUnknownParameterType = "warning"
+reportUnknownLambdaType = "warning"
+reportPrivateUsage = "warning"
+reportUntypedFunctionDecorator = "none"
+reportMissingImports = "warning"
+reportAttributeAccessIssue = "warning"
+reportOptionalMemberAccess = "warning"
+reportInvalidTypeForm = "warning"
+reportUnnecessaryComparison = "warning"
+reportUnusedImport = "warning"  # used in doctests
+reportUnusedFunction = "warning"  # used in doctests
 
 [tool.pytest.ini_options]
-addopts = "-vvl --doctest-modules"
-doctest_optionflags =  "NORMALIZE_WHITESPACE ELLIPSIS ALLOW_UNICODE ALLOW_BYTES IGNORE_EXCEPTION_DETAIL"
-log_cli = true
-log_cli_level = "CRITICAL"
+# Note: --doctest-modules is removed from defaults - the doctests require a live dockware instance.
+# Run doctests explicitly against dockware: pytest --doctest-modules src/lib_shopware6_api
+doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "ALLOW_UNICODE", "ALLOW_BYTES", "IGNORE_EXCEPTION_DETAIL"]
+pythonpath = ["src"]
+markers = [
+  "os_agnostic: test runs on every supported operating system",
+  "os_windows: test exercises Windows-only behavior",
+  "os_macos: test exercises macOS-only behavior",
+  "os_posix: test exercises behavior requiring POSIX semantics",
+  "os_linux: test exercises Linux-only behavior",
+  "local_only: tests that require the local dev environment (external resources, script composition); skipped in CI",
+  "integration: tests requiring external resources (a running Shopware/dockware instance); run via 'make testintegration'",
+]
 
-[tool.pip-audit]
-# Known vulnerabilities to ignore (unfixable or accepted risk)
-# GHSA-4xh5-x5gv-qwph: py library ReDoS (no fix available, low risk)
-# PYSEC-2022-42969: same as above (alias)
-ignore-vulns = ["GHSA-4xh5-x5gv-qwph", "PYSEC-2022-42969"]
+[tool.coverage.run]
+branch = true
+parallel = false
+data_file = "/tmp/.coverage.lib_shopware6_api"
+source = ["src/lib_shopware6_api"]
+
+[tool.coverage.report]
+omit = [
+  "tests/*",
+]
+exclude_lines = [
+  "pragma: no cover",
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+  "@abstractmethod",
+]
+# Unit-only floor: the resource methods are thin wrappers best exercised end-to-end, so they
+# are covered by the dockware integration suite (CI's separate Integration job), not unit tests.
+fail_under = 40
+show_missing = true
+
+[tool.coverage.json]
+output = "coverage.json"
+pretty_print = true
+
 [tool.clean]
-# Patterns to remove when running `make clean` or `python -m scripts clean`
+# Patterns to remove when running `make clean`
 patterns = [
+  "**/__pycache__",
   ".hypothesis",
   ".import_linter_cache",
   ".pytest_cache",
@@ -121,7 +217,47 @@ patterns = [
 default-remote = "origin"
 
 [tool.scripts.test]
-# Configuration for scripts/test.py test runner
+# Test-runner settings consumed by bmk (make test)
 pytest-verbosity = "-vv"
 coverage-report-file = "coverage.xml"
 src-path = "src"
+
+[tool.importlinter]
+root_package = "lib_shopware6_api"
+exclude_type_checking_imports = true
+
+[[tool.importlinter.contracts]]
+name = "Resource modules do not import the facade"
+type = "forbidden"
+source_modules = [
+    "lib_shopware6_api.sub_currency",
+    "lib_shopware6_api.sub_delivery_time",
+    "lib_shopware6_api.sub_media",
+    "lib_shopware6_api.sub_product",
+    "lib_shopware6_api.sub_tax",
+    "lib_shopware6_api.sub_unit",
+]
+forbidden_modules = [
+    "lib_shopware6_api.lib_shopware6_api",
+]
+
+[tool.pip-audit]
+# Known vulnerabilities to ignore (environment-level packages, not project dependencies)
+ignore-vulns = [
+  "PYSEC-2022-42969",  # py 1.11.0 — ReDoS, env-only (pytest legacy), no fix available
+  "PYSEC-2022-43012",  # setuptools 65.5.0 — bundled with macOS Py 3.10/3.11 runners
+  "PYSEC-2025-49",     # setuptools 65.5.0 — bundled with macOS Py 3.10/3.11 runners
+  "CVE-2024-6345",     # setuptools 65.5.0 — bundled with macOS Py 3.10/3.11 runners
+  "CVE-2026-3219",     # pip 26.0.1 — env-only, not a project dependency, no fix available
+  "CVE-2026-6357",     # pip 26.0.1 — env-only (GHA runner image), fix in pip 26.1, awaiting runner bump
+  "PYSEC-2026-196",    # pip 26.1.1 — env-only (GHA runner image), fix in pip 26.1.2, awaiting runner bump
+  # Shared dev-venv audit noise — NOT dependencies of this project (absent from CI's clean env);
+  # present only because sibling editable projects share the local venv.
+  "CVE-2026-34993",    # aiohttp 3.13.5 — not a project dependency (shared-venv noise), fix in 3.14.0
+  "CVE-2026-47265",    # aiohttp 3.13.5 — not a project dependency (shared-venv noise), fix in 3.14.0
+  "CVE-2026-44405",    # paramiko 4.0.0 — not a project dependency (shared-venv noise), no fix available
+  "PYSEC-2026-175",    # pyjwt 2.12.1 — not a project dependency (shared-venv noise), fix in 2.13.0
+  "PYSEC-2026-177",    # pyjwt 2.12.1 — not a project dependency (shared-venv noise), fix in 2.13.0
+  "PYSEC-2026-178",    # pyjwt 2.12.1 — not a project dependency (shared-venv noise), fix in 2.13.0
+  "PYSEC-2026-179",    # pyjwt 2.12.1 — not a project dependency (shared-venv noise), fix in 2.13.0
+]

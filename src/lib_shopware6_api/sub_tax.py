@@ -1,17 +1,22 @@
 # STDLIB
 from decimal import Decimal
-from functools import lru_cache
-from typing import Any, Dict, List, Optional
+from functools import cache
+from typing import Any
 
 # OWN
-from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ConfShopware6ApiBase
+from lib_shopware6_api_base import ConfShopware6ApiBase, Shopware6AdminAPIClientBase
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
+
+from ._conf_helper import resolve_config
 
 
 # Tax{{{
-class Tax(object):
+class Tax:
     def __init__(
-        self, admin_client: Optional[Shopware6AdminAPIClientBase] = None, config: Optional[ConfShopware6ApiBase] = None, use_docker_test_container: bool = False
+        self,
+        admin_client: Shopware6AdminAPIClientBase | None = None,
+        config: ConfShopware6ApiBase | None = None,
+        use_docker_test_container: bool = False,
     ) -> None:
         """
         :param admin_client:
@@ -24,7 +29,7 @@ class Tax(object):
         """
         # Tax}}}
         if admin_client is None:
-            self._admin_client = Shopware6AdminAPIClientBase(config=config, use_docker_test_container=use_docker_test_container)
+            self._admin_client = Shopware6AdminAPIClientBase(config=resolve_config(config, use_docker_test_container))
         else:
             self._admin_client = admin_client
 
@@ -44,7 +49,7 @@ class Tax(object):
         self.get_tax_rate_by_name.cache_clear()
 
     # get_tax_id_by_name{{{
-    @lru_cache(maxsize=None)
+    @cache
     def get_tax_id_by_name(self, tax_name: str = "Standard rate") -> str:
         """
         :param tax_name: the name of the tax record, like 'Standard rate', 'Reduced rate', 'Reduced Rate2'
@@ -79,11 +84,11 @@ class Tax(object):
         try:
             tax_id = str(dict_response["data"][0]["id"])
         except IndexError:
-            raise FileNotFoundError(f'tax record with name "{tax_name}" not found')
+            raise FileNotFoundError(f'tax record with name "{tax_name}" not found') from None
         return tax_id
 
     # get_taxes{{{
-    def get_taxes(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_taxes(self, payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         get all tax records - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -109,7 +114,7 @@ class Tax(object):
         return l_dict_data
 
     # get_tax_rate_by_name{{{
-    @lru_cache(maxsize=None)
+    @cache
     def get_tax_rate_by_name(self, tax_name: str = "Standard rate") -> Decimal:
         """
         :param tax_name: the name of the tax record, like 'Standard rate', 'Reduced rate', 'Reduced Rate2'
@@ -144,5 +149,5 @@ class Tax(object):
         try:
             tax_rate = str(dict_response["data"][0]["taxRate"])
         except IndexError:
-            raise FileNotFoundError(f'tax record with name "{tax_name}" not found')
+            raise FileNotFoundError(f'tax record with name "{tax_name}" not found') from None
         return Decimal(tax_rate)

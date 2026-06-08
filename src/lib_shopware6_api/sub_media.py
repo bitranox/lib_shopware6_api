@@ -1,13 +1,15 @@
 # STDLIB
-from functools import lru_cache
 import hashlib
-from os import PathLike
 import pathlib
-from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
+from functools import cache
+from os import PathLike
+from typing import TYPE_CHECKING, Any
 
 # OWN
-from lib_shopware6_api_base import Shopware6AdminAPIClientBase, ShopwareAPIError, ConfShopware6ApiBase, PayLoad
+from lib_shopware6_api_base import ConfShopware6ApiBase, PayLoad, Shopware6AdminAPIClientBase, ShopwareAPIError
 from lib_shopware6_api_base import lib_shopware6_api_base_criteria as dal
+
+from ._conf_helper import resolve_config
 
 # fix Pathlike mypy error
 # see : https://stackoverflow.com/questions/55076778/why-isnt-this-function-type-annotated-correctly-error-missing-type-parameters
@@ -16,14 +18,17 @@ if TYPE_CHECKING:
 else:
     BasePathLike = PathLike
 
-PathMedia = Union[str, BasePathLike, pathlib.Path]
-PathMediaFolder = Union[str, BasePathLike, pathlib.Path]
+PathMedia = str | BasePathLike | pathlib.Path
+PathMediaFolder = str | BasePathLike | pathlib.Path
 
 
 # Media{{{
-class Media(object):
+class Media:
     def __init__(
-        self, admin_client: Optional[Shopware6AdminAPIClientBase] = None, config: Optional[ConfShopware6ApiBase] = None, use_docker_test_container: bool = False
+        self,
+        admin_client: Shopware6AdminAPIClientBase | None = None,
+        config: ConfShopware6ApiBase | None = None,
+        use_docker_test_container: bool = False,
     ) -> None:
         """
         >>> # Setup
@@ -32,7 +37,7 @@ class Media(object):
         """
         # Media}}}
         if admin_client is None:
-            self._admin_client = Shopware6AdminAPIClientBase(config=config, use_docker_test_container=use_docker_test_container)
+            self._admin_client = Shopware6AdminAPIClientBase(config=resolve_config(config, use_docker_test_container))
         else:
             self._admin_client = admin_client
 
@@ -73,7 +78,7 @@ class Media(object):
     # calc_media_filename_from_product_number{{{
     @staticmethod
     def calc_media_filename_from_product_number(
-        product_number: Union[int, str],
+        product_number: int | str,
         position: int,
         url: str,
     ) -> str:
@@ -95,7 +100,7 @@ class Media(object):
         'test_get_media_filename_from_product_number_1.jpg'
         """
         # calc_media_filename_from_product_number}}}
-        media_filename = "{num:0>9}".format(num=str(product_number)) + f"_{position}" + pathlib.Path(url).suffix
+        media_filename = f"{product_number!s:0>9}" + f"_{position}" + pathlib.Path(url).suffix
         return media_filename
 
     # calc_new_media_id{{{
@@ -127,11 +132,11 @@ class Media(object):
         if not path_media_filename.suffix:
             raise ValueError(f'media_filename "{media_filename}" must have an extension')
         media_filename = str(path_media_filename.name)
-        media_id = hashlib.md5(media_filename.encode("utf-8")).hexdigest()
+        media_id = hashlib.md5(media_filename.encode("utf-8"), usedforsecurity=False).hexdigest()
         return media_id
 
     # calc_path_media_folder_from_product_number{{{
-    def calc_path_media_folder_from_product_number(self, product_number: Union[int, str]) -> str:
+    def calc_path_media_folder_from_product_number(self, product_number: int | str) -> str:
         """
         get the path of the complete media folder for a given product_number.
         the directory structure will be created as follows :
@@ -154,9 +159,15 @@ class Media(object):
 
         """
         # calc_path_media_folder_from_product_number}}}
-        product_number_md5 = hashlib.md5(str(product_number).encode("utf-8")).hexdigest()
+        product_number_md5 = hashlib.md5(str(product_number).encode("utf-8"), usedforsecurity=False).hexdigest()
         path_media_folder = pathlib.Path(self.conf_path_media_folder_root)
-        path_media_folder = path_media_folder / product_number_md5[0:2] / product_number_md5[2:4] / product_number_md5[4:6] / product_number_md5[6:]
+        path_media_folder = (
+            path_media_folder
+            / product_number_md5[0:2]
+            / product_number_md5[2:4]
+            / product_number_md5[4:6]
+            / product_number_md5[6:]
+        )
         return path_media_folder.as_posix()
 
     # delete_media_by_id{{{
@@ -187,7 +198,7 @@ class Media(object):
         self.cache_clear_media()
 
     # delete_media_folder{{{
-    def delete_media_folder(self, media_folder_id: Optional[str], force: bool = False) -> None:
+    def delete_media_folder(self, media_folder_id: str | None, force: bool = False) -> None:
         """
         delete a media folder. on force, also containing media is deleted
         DANGER - API DELETES FOLDERS RUTHLESS - including Subfolders and pictures
@@ -233,9 +244,8 @@ class Media(object):
         if media_folder_id is None:
             raise OSError("the root folder can not be deleted")
 
-        if not force:
-            if not self.is_media_folder_empty(media_folder_id=media_folder_id):
-                raise OSError(f'media_folder_id "{media_folder_id}" is not empty')
+        if not force and not self.is_media_folder_empty(media_folder_id=media_folder_id):
+            raise OSError(f'media_folder_id "{media_folder_id}" is not empty')
 
         self._admin_client.request_delete(f"media-folder/{media_folder_id}")
         self.cache_clear_media_folder()
@@ -270,13 +280,12 @@ class Media(object):
         """
         # delete_media_folder_by_path}}}
         media_folder_id = self.get_media_folder_id_by_path(path_media_folder=path_media_folder)  # type: ignore
-        if not force:
-            if not self.is_media_folder_empty_by_path(path_media_folder=path_media_folder):
-                raise OSError(f'media_folder "{path_media_folder}" is not empty')
+        if not force and not self.is_media_folder_empty_by_path(path_media_folder=path_media_folder):
+            raise OSError(f'media_folder "{path_media_folder}" is not empty')
         self.delete_media_folder(media_folder_id=media_folder_id, force=True)
 
     # get_media_folder_configuration_id_from_media_folder_id{{{
-    @lru_cache(maxsize=None)
+    @cache
     def get_media_folder_configuration_id_from_media_folder_id(self, media_folder_id: str) -> str:
         """
         get the configuration_id of a media_folder. this configuration_id can be passed to child folders,
@@ -314,12 +323,14 @@ class Media(object):
         try:
             media_folder_configuration_id = str(dict_response["data"][0]["configurationId"])
         except IndexError:
-            raise FileNotFoundError(f'media folder with id "{media_folder_id}" not found')
+            raise FileNotFoundError(f'media folder with id "{media_folder_id}" not found') from None
         return media_folder_configuration_id
 
     # get_media_folder_configuration_id_from_media_folder_name{{{
-    @lru_cache(maxsize=None)
-    def get_media_folder_configuration_id_from_media_folder_name(self, media_folder_name: str = "Product Media", parent_id: Optional[str] = None) -> str:
+    @cache
+    def get_media_folder_configuration_id_from_media_folder_name(
+        self, media_folder_name: str = "Product Media", parent_id: str | None = None
+    ) -> str:
         """
         get the configuration_id of a media folder. this configuration_id can be passed to child folders,
         in order to inherit the configuration from the parent folder
@@ -352,18 +363,21 @@ class Media(object):
         payload = dal.Criteria()
         payload.page = 1
         payload.limit = 1
-        payload.filter = [dal.EqualsFilter(field="name", value=media_folder_name), dal.EqualsFilter(field="parentId", value=parent_id)]
+        payload.filter = [
+            dal.EqualsFilter(field="name", value=media_folder_name),
+            dal.EqualsFilter(field="parentId", value=parent_id),
+        ]
         payload.includes = {"media_folder": ["configurationId"]}
 
         dict_response = self._admin_client.request_post(request_url="search/media-folder", payload=payload)
         try:
             media_folder_configuration_id = str(dict_response["data"][0]["configurationId"])
         except IndexError:
-            raise FileNotFoundError(f'media folder with name "{media_folder_name}" not found')
+            raise FileNotFoundError(f'media folder with name "{media_folder_name}" not found') from None
         return media_folder_configuration_id
 
     # get_media_folder_configurations{{{
-    def get_media_folder_configurations(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_media_folder_configurations(self, payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         get all media_folder_configurations - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -388,8 +402,8 @@ class Media(object):
         return l_dict_data
 
     # get_media_folder_id{{{
-    @lru_cache(maxsize=None)
-    def get_media_folder_id(self, name: str, parent_id: Optional[str]) -> str:
+    @cache
+    def get_media_folder_id(self, name: str, parent_id: str | None) -> str:
         """
         get the id of a media folder
         >>> # Setup
@@ -409,19 +423,22 @@ class Media(object):
 
         """
         # get_media_folder_id}}}
-        payload: Dict[str, Any] = {"limit": "1", "page": "1"}  # noqa
-        payload["filter"] = [{"type": "equals", "field": "name", "value": name}, {"type": "equals", "field": "parentId", "value": parent_id}]
+        payload: dict[str, Any] = {"limit": "1", "page": "1"}
+        payload["filter"] = [
+            {"type": "equals", "field": "name", "value": name},
+            {"type": "equals", "field": "parentId", "value": parent_id},
+        ]
         payload["includes"] = {"media_folder": ["id"]}
         response_dict = self._admin_client.request_post("search/media-folder", payload)
         try:
             media_folder_id = str(response_dict["data"][0]["id"])
         except IndexError:
-            raise FileNotFoundError(f'media_folder, name: "{name}", parent_id: "{parent_id}" not found')
+            raise FileNotFoundError(f'media_folder, name: "{name}", parent_id: "{parent_id}" not found') from None
         return media_folder_id
 
     # get_media_folder_id_by_path{{{
-    @lru_cache(maxsize=None)
-    def get_media_folder_id_by_path(self, path_media_folder: PathMediaFolder) -> Optional[str]:
+    @cache
+    def get_media_folder_id_by_path(self, path_media_folder: PathMediaFolder) -> str | None:
         """
         get the id of a media folder
         :param path_media_folder: path - for instance /Product Media/a000/000/001
@@ -455,17 +472,17 @@ class Media(object):
         # get_media_folder_id_by_path}}}
         l_media_folder_names = self._get_media_folder_parts(path_media_folder=path_media_folder)
         media_folder_id = None
-        parent_id: Optional[str] = None
+        parent_id: str | None = None
         for media_folder_name in l_media_folder_names:
             try:
                 media_folder_id = self.get_media_folder_id(name=media_folder_name, parent_id=parent_id)
             except FileNotFoundError:
-                raise FileNotFoundError(f'media_folder path "{path_media_folder}" not found')
+                raise FileNotFoundError(f'media_folder path "{path_media_folder}" not found') from None
             parent_id = media_folder_id
         return media_folder_id
 
     # get_media_folders{{{
-    def get_media_folders(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_media_folders(self, payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         get all media_folder - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -523,16 +540,19 @@ class Media(object):
         payload = dal.Criteria()
         payload.page = 1
         payload.limit = 1
-        payload.filter = [dal.EqualsFilter(field="fileName", value=media_filename_stem), dal.EqualsFilter(field="fileExtension", value=media_filename_suffix)]
+        payload.filter = [
+            dal.EqualsFilter(field="fileName", value=media_filename_stem),
+            dal.EqualsFilter(field="fileExtension", value=media_filename_suffix),
+        ]
         payload.includes = {"media": ["id"]}
         try:
             media_id = str(self._admin_client.request_post("search/media", payload)["data"][0]["id"])
             return media_id
         except IndexError:
-            raise FileNotFoundError(f'media_filename: "{media_filename_stem}.{media_filename_suffix}" not found')
+            raise FileNotFoundError(f'media_filename: "{media_filename_stem}.{media_filename_suffix}" not found') from None
 
     # get_medias{{{
-    def get_medias(self, payload: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_medias(self, payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         get all media records - filters and so on can be set in the payload
         we read paginated (in junks of 100 items) - this is done automatically by function base_client.request_get_paginated()
@@ -560,11 +580,11 @@ class Media(object):
     # insert_media{{{
     def insert_media(
         self,
-        media_folder_id: Union[str, None],
+        media_folder_id: str | None,
         url: str,
-        media_alt_txt: Union[str, None] = None,
-        media_title: Union[str, None] = None,
-        media_filename: Optional[PathMedia] = None,
+        media_alt_txt: str | None = None,
+        media_title: str | None = None,
+        media_filename: PathMedia | None = None,
         upload_media: bool = True,
     ) -> str:
         """
@@ -619,13 +639,17 @@ class Media(object):
 
         # upload the url to the article if needed
         if upload_media:
-            self.upload_media_from_url(media_id=media_id, url=url, filename_suffix=media_filename_suffix, filename_stem=media_filename_stem)
+            self.upload_media_from_url(
+                media_id=media_id, url=url, filename_suffix=media_filename_suffix, filename_stem=media_filename_stem
+            )
 
         self.cache_clear_media()
         return media_id
 
     # insert_media_by_path{{{
-    def insert_media_by_path(self, path_media: PathMedia, url: str, media_alt_txt: Union[str, None] = None, media_title: Union[str, None] = None) -> str:
+    def insert_media_by_path(
+        self, path_media: PathMedia, url: str, media_alt_txt: str | None = None, media_title: str | None = None
+    ) -> str:
         """
         Inserts a Media by Path, and upload the media from the url.
         note that the same media_filename must not exist twice in the shop, even if on different media folders !
@@ -666,12 +690,18 @@ class Media(object):
         media_filename = pathlib.Path(path_media).name
         media_folder_id = self.upsert_media_folders_by_path(path_media_folder=path_media_folder)
         media_id = self.insert_media(
-            media_folder_id=media_folder_id, url=url, media_alt_txt=media_alt_txt, media_title=media_title, media_filename=media_filename
+            media_folder_id=media_folder_id,
+            url=url,
+            media_alt_txt=media_alt_txt,
+            media_title=media_title,
+            media_filename=media_filename,
         )
         return media_id
 
     # insert_media_folder_by_name_and_parent_id{{{
-    def insert_media_folder_by_name_and_parent_id(self, name: str, parent_id: Optional[str], configuration_id: Optional[str] = None) -> None:
+    def insert_media_folder_by_name_and_parent_id(
+        self, name: str, parent_id: str | None, configuration_id: str | None = None
+    ) -> None:
         """
         insert a media folder
 
@@ -776,7 +806,7 @@ class Media(object):
         return bool(l_data_dict)
 
     # is_media_folder_containing_subfolders{{{
-    def is_media_folder_containing_subfolders(self, media_folder_id: Optional[str]) -> bool:
+    def is_media_folder_containing_subfolders(self, media_folder_id: str | None) -> bool:
         """
         :returns True if there is a subfolder in the media folder
         :param media_folder_id:
@@ -812,13 +842,12 @@ class Media(object):
         payload.includes = {"media_folder": ["id"]}
         l_media = self.search_media_folders(payload=payload)
         is_subfolder = bool(l_media)
-        if not is_subfolder:
-            if not self.is_media_folder_existing(media_folder_id=media_folder_id):
-                raise FileNotFoundError(f'media_folder id "{media_folder_id}" not found')
+        if not is_subfolder and not self.is_media_folder_existing(media_folder_id=media_folder_id):
+            raise FileNotFoundError(f'media_folder id "{media_folder_id}" not found')
         return bool(l_media)
 
     # is_media_folder_empty{{{
-    def is_media_folder_empty(self, media_folder_id: Optional[str]) -> bool:
+    def is_media_folder_empty(self, media_folder_id: str | None) -> bool:
         """
         true if the media_folder does not contain any media files or subfolders
         :param media_folder_id:
@@ -857,11 +886,10 @@ class Media(object):
         """
         # is_media_folder_empty}}}
 
-        if self.is_media_in_media_folder(media_folder_id=media_folder_id):
-            return False
-        if self.is_media_folder_containing_subfolders(media_folder_id=media_folder_id):
-            return False
-        return True
+        return not (
+            self.is_media_in_media_folder(media_folder_id=media_folder_id)
+            or self.is_media_folder_containing_subfolders(media_folder_id=media_folder_id)
+        )
 
     # is_media_folder_empty_by_path{{{
     def is_media_folder_empty_by_path(self, path_media_folder: PathMediaFolder) -> bool:
@@ -903,7 +931,7 @@ class Media(object):
         return self.is_media_folder_empty(media_folder_id=media_folder_id)
 
     # is_media_folder_existing{{{
-    def is_media_folder_existing(self, media_folder_id: Optional[str]) -> bool:
+    def is_media_folder_existing(self, media_folder_id: str | None) -> bool:
         """
         True if the folder exists, False if it does not exist
         :param media_folder_id:
@@ -953,7 +981,7 @@ class Media(object):
             return False
 
     # is_media_in_media_folder{{{
-    def is_media_in_media_folder(self, media_folder_id: Optional[str]) -> bool:
+    def is_media_in_media_folder(self, media_folder_id: str | None) -> bool:
         """
         :returns True if there is some media files in the media folder
         :param media_folder_id:
@@ -993,11 +1021,11 @@ class Media(object):
             response_dict = self._admin_client.request_post("search/media", payload)
             l_data_dict = list(response_dict["data"])
         except ShopwareAPIError:
-            raise FileNotFoundError(f'media_folder id "{media_folder_id}" not found')
+            raise FileNotFoundError(f'media_folder id "{media_folder_id}" not found') from None
         return bool(l_data_dict)
 
     # search_media_folders{{{
-    def search_media_folders(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+    def search_media_folders(self, payload: PayLoad = None) -> list[dict[str, Any]]:
         """
         get all the media folders
 
@@ -1011,13 +1039,12 @@ class Media(object):
         # search_media_folders}}}
         if payload is None:
             payload = {}
-        # response_dict = self.admin_client.request_post_paginated("search/media-folder", payload)
         response_dict = self._admin_client.request_post("search/media-folder", payload)
         l_dict_data = list(response_dict["data"])
         return l_dict_data
 
     # search_medias{{{
-    def search_medias(self, payload: PayLoad = None) -> List[Dict[str, Any]]:
+    def search_medias(self, payload: PayLoad = None) -> list[dict[str, Any]]:
         """
         get all the media
 
@@ -1036,11 +1063,11 @@ class Media(object):
     # update_media{{{
     def update_media(
         self,
-        media_folder_id: Union[str, None],
+        media_folder_id: str | None,
         url: str,
-        media_alt_txt: Union[str, None] = None,
-        media_title: Union[str, None] = None,
-        media_filename: Optional[PathMedia] = None,
+        media_alt_txt: str | None = None,
+        media_title: str | None = None,
+        media_filename: PathMedia | None = None,
         upload_media: bool = True,
     ) -> str:
         """
@@ -1090,7 +1117,9 @@ class Media(object):
 
         # upload the url to the article
         if upload_media:
-            self.upload_media_from_url(media_id=media_id, url=url, filename_suffix=media_filename_suffix, filename_stem=media_filename_stem)
+            self.upload_media_from_url(
+                media_id=media_id, url=url, filename_suffix=media_filename_suffix, filename_stem=media_filename_stem
+            )
         return media_id
 
     # upload_media_from_url{{{
@@ -1108,16 +1137,18 @@ class Media(object):
         # upload the media via url
         filename_suffix = filename_suffix.lstrip(".")
         payload = {"url": url}
-        self._admin_client.request_post(f"_action/media/{media_id}/upload?extension={filename_suffix}&fileName={filename_stem}", payload)
+        self._admin_client.request_post(
+            f"_action/media/{media_id}/upload?extension={filename_suffix}&fileName={filename_stem}", payload
+        )
 
     # upsert_media{{{
     def upsert_media(
         self,
-        product_number: Union[int, str],
+        product_number: int | str,
         position: int,
         url: str,
-        media_alt: Union[str, None] = None,
-        media_title: Union[str, None] = None,
+        media_alt: str | None = None,
+        media_title: str | None = None,
         upload_media: bool = True,
     ) -> str:
         """
@@ -1186,7 +1217,7 @@ class Media(object):
         return media_id
 
     # upsert_media_folders_by_path{{{
-    def upsert_media_folders_by_path(self, path_media_folder: PathMediaFolder, configuration_id: Optional[str] = None) -> Optional[str]:
+    def upsert_media_folders_by_path(self, path_media_folder: PathMediaFolder, configuration_id: str | None = None) -> str | None:
         """
         upsert media folders - including the parents, exist is ok
 
@@ -1215,18 +1246,20 @@ class Media(object):
 
         l_media_folder_names = self._get_media_folder_parts(path_media_folder=path_media_folder)
         media_folder_id = None
-        parent_id: Optional[str] = None
+        parent_id: str | None = None
         for media_folder_name in l_media_folder_names:
             try:
                 media_folder_id = self.get_media_folder_id(name=media_folder_name, parent_id=parent_id)
             except FileNotFoundError:
-                self.insert_media_folder_by_name_and_parent_id(name=media_folder_name, parent_id=parent_id, configuration_id=configuration_id)
+                self.insert_media_folder_by_name_and_parent_id(
+                    name=media_folder_name, parent_id=parent_id, configuration_id=configuration_id
+                )
                 media_folder_id = self.get_media_folder_id(name=media_folder_name, parent_id=parent_id)
             parent_id = media_folder_id
         return media_folder_id
 
     @staticmethod
-    def _get_media_folder_parts(path_media_folder: PathMediaFolder) -> Tuple[str, ...]:
+    def _get_media_folder_parts(path_media_folder: PathMediaFolder) -> tuple[str, ...]:
         """
         Provide the parts of the media folder: /Product Media/a000/000/000/test001_01.jpg --> ('Product Media','a000','000','000','test001_01.jpg')
 
