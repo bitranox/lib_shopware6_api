@@ -1,4 +1,4 @@
-"""lib_shopware6_api — higher-level Shopware 6 API client built on lib_shopware6_api_base."""
+"""lib_shopware6_api - higher-level Shopware 6 API client built on lib_shopware6_api_base."""
 
 from . import __init__conf__
 from .lib_shopware6_api import Shopware6API

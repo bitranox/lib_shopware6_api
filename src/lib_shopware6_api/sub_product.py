@@ -146,7 +146,7 @@ class Product:
         >>> # Setup
         >>> my_api = Product()
         >>> my_payload = dal.Criteria(limit=1, page=1)
-        >>> first_article = my_api._admin_client.request_get(request_url="product", payload=my_payload)["data"][0]
+        >>> first_article = my_api._admin_client.request_get(request_url="product", payload=my_payload).data[0]
         >>> my_article_id = first_article['id']
         >>> my_article_product_number = first_article['productNumber']
 
@@ -179,7 +179,7 @@ class Product:
 
         dict_response = self._admin_client.request_post(request_url="search/product", payload=payload)
         try:
-            article_id = str(dict_response["data"][0]["id"])
+            article_id = str(dict_response.data[0]["id"])
             self.get_product_id_by_product_number.cache_clear()
         except IndexError:
             raise FileNotFoundError(f'article with productNumber(mysql_artikelnummer) "{product_number}" not found') from None
@@ -298,7 +298,7 @@ class Product:
         # get_product_medias}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="product-media", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data
 
     # get_products{{{
@@ -326,7 +326,7 @@ class Product:
         # get_products}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="product", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data
 
     # insert_product{{{
@@ -529,7 +529,7 @@ class Product:
         """
         # search_product_medias}}}
         response_dict = self._admin_client.request_post_paginated("search/product-media", payload)
-        l_data_dict = list(response_dict["data"])
+        l_data_dict = list(response_dict.data)
         return l_data_dict
 
     # upsert_product_pictures{{{

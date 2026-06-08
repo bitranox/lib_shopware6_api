@@ -11,14 +11,15 @@ from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
+from lib_shopware6_api_base import ShopwareApiResponse
 
 from lib_shopware6_api import Currency, DeliveryTime, Tax, Unit
 
 
 def _mock_client(data: list[dict[str, Any]]) -> MagicMock:
-    """A mock admin client whose request_* methods all return ``{"data": data}``."""
+    """A mock admin client whose request_* methods all return a ShopwareApiResponse."""
     client = MagicMock()
-    response = {"data": data}
+    response = ShopwareApiResponse(data=data, total=len(data))
     for method in ("request_get", "request_get_paginated", "request_post", "request_post_paginated"):
         getattr(client, method).return_value = response
     return client

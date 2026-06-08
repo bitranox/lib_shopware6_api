@@ -321,7 +321,7 @@ class Media:
 
         dict_response = self._admin_client.request_post(request_url="search/media-folder", payload=payload)
         try:
-            media_folder_configuration_id = str(dict_response["data"][0]["configurationId"])
+            media_folder_configuration_id = str(dict_response.data[0]["configurationId"])
         except IndexError:
             raise FileNotFoundError(f'media folder with id "{media_folder_id}" not found') from None
         return media_folder_configuration_id
@@ -371,7 +371,7 @@ class Media:
 
         dict_response = self._admin_client.request_post(request_url="search/media-folder", payload=payload)
         try:
-            media_folder_configuration_id = str(dict_response["data"][0]["configurationId"])
+            media_folder_configuration_id = str(dict_response.data[0]["configurationId"])
         except IndexError:
             raise FileNotFoundError(f'media folder with name "{media_folder_name}" not found') from None
         return media_folder_configuration_id
@@ -398,7 +398,7 @@ class Media:
         # get_media_folder_configurations}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="media-folder-configuration", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data
 
     # get_media_folder_id{{{
@@ -431,7 +431,7 @@ class Media:
         payload["includes"] = {"media_folder": ["id"]}
         response_dict = self._admin_client.request_post("search/media-folder", payload)
         try:
-            media_folder_id = str(response_dict["data"][0]["id"])
+            media_folder_id = str(response_dict.data[0]["id"])
         except IndexError:
             raise FileNotFoundError(f'media_folder, name: "{name}", parent_id: "{parent_id}" not found') from None
         return media_folder_id
@@ -502,7 +502,7 @@ class Media:
         """
         # get_media_folders}}}
         dict_response = self._admin_client.request_get_paginated(request_url="media-folder", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data
 
     # get_media_id_by_media_filename{{{
@@ -546,7 +546,7 @@ class Media:
         ]
         payload.includes = {"media": ["id"]}
         try:
-            media_id = str(self._admin_client.request_post("search/media", payload)["data"][0]["id"])
+            media_id = str(self._admin_client.request_post("search/media", payload).data[0]["id"])
             return media_id
         except IndexError:
             raise FileNotFoundError(f'media_filename: "{media_filename_stem}.{media_filename_suffix}" not found') from None
@@ -574,7 +574,7 @@ class Media:
         # get_medias}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="media", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data
 
     # insert_media{{{
@@ -802,7 +802,7 @@ class Media:
         payload.filter = [dal.EqualsFilter(field="id", value=media_id)]
         payload.includes = {"media": ["id"]}
         response_dict = self._admin_client.request_post("search/media", payload)
-        l_data_dict = list(response_dict["data"])
+        l_data_dict = list(response_dict.data)
         return bool(l_data_dict)
 
     # is_media_folder_containing_subfolders{{{
@@ -1019,7 +1019,7 @@ class Media:
         payload.includes = {"media": ["id"]}
         try:
             response_dict = self._admin_client.request_post("search/media", payload)
-            l_data_dict = list(response_dict["data"])
+            l_data_dict = list(response_dict.data)
         except ShopwareAPIError:
             raise FileNotFoundError(f'media_folder id "{media_folder_id}" not found') from None
         return bool(l_data_dict)
@@ -1040,7 +1040,7 @@ class Media:
         if payload is None:
             payload = {}
         response_dict = self._admin_client.request_post("search/media-folder", payload)
-        l_dict_data = list(response_dict["data"])
+        l_dict_data = list(response_dict.data)
         return l_dict_data
 
     # search_medias{{{
@@ -1057,7 +1057,7 @@ class Media:
         """
         # search_medias}}}
         response_dict = self._admin_client.request_post_paginated("search/media", payload)
-        l_data_dict = list(response_dict["data"])
+        l_data_dict = list(response_dict.data)
         return l_data_dict
 
     # update_media{{{
@@ -1137,8 +1137,12 @@ class Media:
         # upload the media via url
         filename_suffix = filename_suffix.lstrip(".")
         payload = {"url": url}
+        # the extension / fileName go as query parameters: base >= 6.0.0 validates the endpoint path
+        # and rejects '?', '=' and '&', so they must not be inlined into the request_url.
         self._admin_client.request_post(
-            f"_action/media/{media_id}/upload?extension={filename_suffix}&fileName={filename_stem}", payload
+            f"_action/media/{media_id}/upload",
+            payload,
+            additional_query_params={"extension": filename_suffix, "fileName": filename_stem},
         )
 
     # upsert_media{{{

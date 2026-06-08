@@ -70,7 +70,7 @@ class DeliveryTime:
         """
         # get_delivery_times}}}
         dict_response = self._admin_client.request_get_paginated(request_url="delivery-time", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data
 
     # search_delivery_times{{{
@@ -87,7 +87,7 @@ class DeliveryTime:
         """
         # search_delivery_times}}}
         response_dict = self._admin_client.request_post_paginated("search/delivery-time", payload)
-        l_data_dict = list(response_dict["data"])
+        l_data_dict = list(response_dict.data)
         return l_data_dict
 
     # get_delivery_times_sorted_by_min_days{{{

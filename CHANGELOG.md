@@ -20,7 +20,7 @@ Complete overhaul aligning the project with its sibling
   `Makefile` (`make test`, `make testintegration`, `make push`, `make release`,
   `make bump-*`). Replaces the previous flake8/black/mypy setup.
 - **CI**: adopted the CI/CD workflows from `lib_shopware6_api_base` (unit and
-  dockware integration suites across Linux/macOS/Windows for Python 3.10–3.14).
+  dockware integration suites across Linux/macOS/Windows for Python 3.10-3.14).
 - **Docs**: documentation converted from reStructuredText to Markdown
   (`README.md`, `CHANGELOG.md`); added a "Development" section and an
   `example.env`.
@@ -30,10 +30,30 @@ Complete overhaul aligning the project with its sibling
 - Unit test suite plus a dockware-backed integration test suite (the harness
   auto-starts/stops the container; integration tests are skipped when Docker is
   unavailable).
+- The source doctests are wired into the suite via `tests/test_doctests.py`
+  (`doctest.testmod`): the offline doctests run in `make test`, the resource
+  doctests (Currency / Tax / Unit / DeliveryTime / Product / Media) run against
+  dockware in `make testintegration`.
+
+### Fixed
+
+- **CLI no longer swallows error messages.** The custom `run_cli` exception
+  handler returned an exit code but never printed, so a failing command (missing
+  config, API error, bad argument) exited non-zero with no diagnostic. Non-signal
+  errors now print their message (terse, or a full traceback under `--traceback`);
+  signals still exit cleanly and quietly. `main()` also snapshots and restores the
+  process-global `--traceback` state so it cannot leak across invocations.
+- **Media upload against base >= 6.0.0**: `Media.upload_media_from_url` passed
+  `extension` / `fileName` as a query string inlined into the endpoint path. The
+  base client now validates the path and rejects `?`, `=` and `&`, which broke
+  every media upload; the parameters are now passed via `additional_query_params`.
+- A `Product.get_product_id_by_product_number` doctest still subscripted the
+  admin response with `["data"]`; updated to `.data` for the `ShopwareApiResponse`
+  envelope introduced by base 6.0.0.
 
 ### Removed
 
-- Swapped `cli_exit_tools` → `lib_cli_exit_tools` and `coloredlogs` → `lib_log_rich`.
+- Swapped `cli_exit_tools` -> `lib_cli_exit_tools` and `coloredlogs` -> `lib_log_rich`.
 - Dropped `attrs` (the `ProductPicture` data class is now a Pydantic model) and
   `lib_detect_testenv`.
 - Removed obsolete scaffolding: `README.rst`, `CHANGES.rst`, `.flake8`,

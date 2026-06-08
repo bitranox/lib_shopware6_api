@@ -5,7 +5,7 @@ description = "python3 higher-level API client for shopware6"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "lib_shopware6_api_base>=4.0.0",
+    "lib_shopware6_api_base>=6.0.1",
     "lib_cli_exit_tools>=2.3.1",
     "lib_log_rich>=6.3.4",
     "pydantic>=2.13.4",
@@ -123,7 +123,7 @@ convention = "google"
 # Facade + resource modules: thin wrappers over the base client; long doctest lines, many params,
 # Shopware payload dicts with magic values, and helper methods that fan out per resource.
 "src/lib_shopware6_api/lib_shopware6_api.py" = ["PLR0913", "E501", "FBT001", "FBT002"]
-# Resource modules: thin API wrappers — long lines, many params, magic Shopware payload
+# Resource modules: thin API wrappers - long lines, many params, magic Shopware payload
 # values, boolean flags, and intentional per-instance memoization (B019) of lookup methods.
 "src/lib_shopware6_api/sub_*.py" = ["PLR0913", "PLR0912", "PLR0915", "PLR2004", "E501", "FBT001", "FBT002", "C901", "B019"]
 
@@ -149,9 +149,11 @@ reportUnusedImport = "warning"  # used in doctests
 reportUnusedFunction = "warning"  # used in doctests
 
 [tool.pytest.ini_options]
-# Note: --doctest-modules is removed from defaults - the doctests require a live dockware instance.
-# Run doctests explicitly against dockware: pytest --doctest-modules src/lib_shopware6_api
-doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS", "ALLOW_UNICODE", "ALLOW_BYTES", "IGNORE_EXCEPTION_DETAIL"]
+# Doctests run through tests/test_doctests.py (doctest.testmod), not --doctest-modules:
+# the offline doctests (metadata banner, CLI info, facade constructor) run in the unit
+# suite; the resource doctests (which need a live Shopware) run in the dockware-backed
+# integration suite.
+doctest_optionflags = ["ELLIPSIS", "NORMALIZE_WHITESPACE", "IGNORE_EXCEPTION_DETAIL"]
 pythonpath = ["src"]
 markers = [
   "os_agnostic: test runs on every supported operating system",
@@ -244,20 +246,20 @@ forbidden_modules = [
 [tool.pip-audit]
 # Known vulnerabilities to ignore (environment-level packages, not project dependencies)
 ignore-vulns = [
-  "PYSEC-2022-42969",  # py 1.11.0 — ReDoS, env-only (pytest legacy), no fix available
-  "PYSEC-2022-43012",  # setuptools 65.5.0 — bundled with macOS Py 3.10/3.11 runners
-  "PYSEC-2025-49",     # setuptools 65.5.0 — bundled with macOS Py 3.10/3.11 runners
-  "CVE-2024-6345",     # setuptools 65.5.0 — bundled with macOS Py 3.10/3.11 runners
-  "CVE-2026-3219",     # pip 26.0.1 — env-only, not a project dependency, no fix available
-  "CVE-2026-6357",     # pip 26.0.1 — env-only (GHA runner image), fix in pip 26.1, awaiting runner bump
-  "PYSEC-2026-196",    # pip 26.1.1 — env-only (GHA runner image), fix in pip 26.1.2, awaiting runner bump
-  # Shared dev-venv audit noise — NOT dependencies of this project (absent from CI's clean env);
+  "PYSEC-2022-42969",  # py 1.11.0 - ReDoS, env-only (pytest legacy), no fix available
+  "PYSEC-2022-43012",  # setuptools 65.5.0 - bundled with macOS Py 3.10/3.11 runners
+  "PYSEC-2025-49",     # setuptools 65.5.0 - bundled with macOS Py 3.10/3.11 runners
+  "CVE-2024-6345",     # setuptools 65.5.0 - bundled with macOS Py 3.10/3.11 runners
+  "CVE-2026-3219",     # pip 26.0.1 - env-only, not a project dependency, no fix available
+  "CVE-2026-6357",     # pip 26.0.1 - env-only (GHA runner image), fix in pip 26.1, awaiting runner bump
+  "PYSEC-2026-196",    # pip 26.1.1 - env-only (GHA runner image), fix in pip 26.1.2, awaiting runner bump
+  # Shared dev-venv audit noise - NOT dependencies of this project (absent from CI's clean env);
   # present only because sibling editable projects share the local venv.
-  "CVE-2026-34993",    # aiohttp 3.13.5 — not a project dependency (shared-venv noise), fix in 3.14.0
-  "CVE-2026-47265",    # aiohttp 3.13.5 — not a project dependency (shared-venv noise), fix in 3.14.0
-  "CVE-2026-44405",    # paramiko 4.0.0 — not a project dependency (shared-venv noise), no fix available
-  "PYSEC-2026-175",    # pyjwt 2.12.1 — not a project dependency (shared-venv noise), fix in 2.13.0
-  "PYSEC-2026-177",    # pyjwt 2.12.1 — not a project dependency (shared-venv noise), fix in 2.13.0
-  "PYSEC-2026-178",    # pyjwt 2.12.1 — not a project dependency (shared-venv noise), fix in 2.13.0
-  "PYSEC-2026-179",    # pyjwt 2.12.1 — not a project dependency (shared-venv noise), fix in 2.13.0
+  "CVE-2026-34993",    # aiohttp 3.13.5 - not a project dependency (shared-venv noise), fix in 3.14.0
+  "CVE-2026-47265",    # aiohttp 3.13.5 - not a project dependency (shared-venv noise), fix in 3.14.0
+  "CVE-2026-44405",    # paramiko 4.0.0 - not a project dependency (shared-venv noise), no fix available
+  "PYSEC-2026-175",    # pyjwt 2.12.1 - not a project dependency (shared-venv noise), fix in 2.13.0
+  "PYSEC-2026-177",    # pyjwt 2.12.1 - not a project dependency (shared-venv noise), fix in 2.13.0
+  "PYSEC-2026-178",    # pyjwt 2.12.1 - not a project dependency (shared-venv noise), fix in 2.13.0
+  "PYSEC-2026-179",    # pyjwt 2.12.1 - not a project dependency (shared-venv noise), fix in 2.13.0
 ]

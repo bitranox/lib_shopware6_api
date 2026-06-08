@@ -73,3 +73,31 @@ class TestMediaFolderLifecycle:
             assert media.get_media_folder_id_by_path(path_media_folder=path) == folder_id
         finally:
             media.delete_media_folder_by_path(path, force=True)
+
+
+class TestCliIntegration:
+    """The read-only CLI commands work end-to-end against the dockware container."""
+
+    @pytest.mark.integration
+    @pytest.mark.usefixtures("docker_container", "dockware_env")
+    def test_test_connection_reports_ok(self) -> None:
+        from click.testing import CliRunner
+
+        from lib_shopware6_api.lib_shopware6_api_cli import cli_main
+
+        result = CliRunner().invoke(cli_main, ["test-connection"])
+        assert result.exit_code == 0, result.output
+        assert "Admin API  OK" in result.output
+
+    @pytest.mark.integration
+    @pytest.mark.usefixtures("docker_container", "dockware_env")
+    def test_list_currencies_returns_json(self) -> None:
+        import json
+
+        from click.testing import CliRunner
+
+        from lib_shopware6_api.lib_shopware6_api_cli import cli_main
+
+        result = CliRunner().invoke(cli_main, ["list", "currencies"])
+        assert result.exit_code == 0, result.output
+        assert isinstance(json.loads(result.output), list)

@@ -119,3 +119,34 @@ def docker_container() -> Generator[None, None, None]:
 
     if started_here:
         _stop_docker_container()
+
+
+@pytest.fixture
+def dockware_env(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, None]:
+    """Point the layered config at the dockware container, with the cache cleared on both ends.
+
+    Seeds the ``LIB_SHOPWARE6_API_BASE___SHOPWARE__*`` environment from the single source of
+    truth (``get_docker_test_config``) so the bare ``Resource()`` / ``require_config_from_env``
+    paths resolve to ``http://localhost``. The cached config is cleared before (to drop any
+    previously cached config) and after (so this dockware config never leaks into a later test).
+    """
+    from lib_shopware6_api_base.config import get_config
+
+    from lib_shopware6_api._conf_helper import get_docker_test_config
+
+    config = get_docker_test_config()
+    env = {
+        "ADMIN_API_URL": config.shopware_admin_api_url,
+        "STOREFRONT_API_URL": config.shopware_storefront_api_url,
+        "USERNAME": config.username,
+        "PASSWORD": config.password,
+        "GRANT_TYPE": config.grant_type.name,
+    }
+    prefix = "LIB_SHOPWARE6_API_BASE___SHOPWARE__"
+    for key, value in env.items():
+        monkeypatch.setenv(prefix + key, value)
+    get_config.cache_clear()
+    try:
+        yield
+    finally:
+        get_config.cache_clear()

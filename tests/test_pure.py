@@ -82,8 +82,8 @@ class TestConfHelper:
     def test_get_docker_test_config(self) -> None:
         config = get_docker_test_config()
         assert config.shopware_admin_api_url == "http://localhost/api"
+        assert config.shopware_storefront_api_url == "http://localhost/store-api"
         assert config.grant_type == GrantType.USER_CREDENTIALS
-        assert config.insecure_transport == "1"
 
     @pytest.mark.os_agnostic
     def test_resolve_config_explicit_wins(self) -> None:
@@ -129,3 +129,83 @@ class TestCli:
         # the click group + info command are wired
         assert callable(cli_main)
         assert callable(cli_info)
+
+    @pytest.mark.os_agnostic
+    def test_new_commands_registered(self) -> None:
+        from click.testing import CliRunner
+
+        out = CliRunner().invoke(cli_main, ["-h"]).output.lower()
+        for command in ("test-connection", "get-product", "list", "config"):
+            assert command in out
+
+    @pytest.mark.os_agnostic
+    def test_list_group_lists_resources(self) -> None:
+        from click.testing import CliRunner
+
+        out = CliRunner().invoke(cli_main, ["list", "-h"]).output.lower()
+        for resource in ("currencies", "taxes", "units", "delivery-times", "products"):
+            assert resource in out
+
+    @pytest.mark.os_agnostic
+    def test_config_paths_runs(self) -> None:
+        from click.testing import CliRunner
+
+        result = CliRunner().invoke(cli_main, ["config", "paths"])
+        assert result.exit_code == 0
+        assert "bundled" in result.output
+        assert "LIB_SHOPWARE6_API_BASE___" in result.output
+
+    @pytest.mark.os_agnostic
+    def test_error_prints_diagnostic_message(self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+        """A live error must print its message - run_cli's custom handler used to swallow it."""
+        import lib_cli_exit_tools
+
+        from lib_shopware6_api.exit_codes import ExitCode
+        from lib_shopware6_api.lib_shopware6_api_cli import _get_exit_code
+
+        # pin the terse format so the assertion does not depend on a leaked global --traceback state
+        monkeypatch.setattr(lib_cli_exit_tools.config, "traceback", False)
+        try:
+            raise ValueError("diagnostic_marker_42")
+        except ValueError as exc:
+            code = _get_exit_code(exc)
+        captured = capsys.readouterr()
+        assert code == ExitCode.INVALID_ARGUMENT
+        assert "diagnostic_marker_42" in (captured.out + captured.err)
+
+    @pytest.mark.os_agnostic
+    def test_configuration_error_prints_message(
+        self, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """A domain exception must also print its diagnostic, not just map an exit code."""
+        import lib_cli_exit_tools
+        from lib_shopware6_api_base import ConfigurationError
+
+        from lib_shopware6_api.exit_codes import ExitCode
+        from lib_shopware6_api.lib_shopware6_api_cli import _get_exit_code
+
+        monkeypatch.setattr(lib_cli_exit_tools.config, "traceback", False)
+        try:
+            raise ConfigurationError("config_marker_99")
+        except ConfigurationError as exc:
+            code = _get_exit_code(exc)
+        captured = capsys.readouterr()
+        assert code == ExitCode.CONFIGURATION_ERROR
+        assert "config_marker_99" in (captured.out + captured.err)
+
+    @pytest.mark.os_agnostic
+    def test_signal_exit_is_quiet(self, capsys: pytest.CaptureFixture[str]) -> None:
+        """Signals exit cleanly with no printed traceback, even with an active exception."""
+        import lib_cli_exit_tools
+
+        from lib_shopware6_api.exit_codes import ExitCode
+        from lib_shopware6_api.lib_shopware6_api_cli import _get_exit_code
+
+        try:
+            raise lib_cli_exit_tools.SigIntInterrupt()
+        except lib_cli_exit_tools.SigIntInterrupt as exc:
+            code = _get_exit_code(exc)
+        captured = capsys.readouterr()
+        assert code == ExitCode.SIGINT
+        assert captured.out == ""
+        assert captured.err == ""

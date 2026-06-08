@@ -61,7 +61,7 @@ class Currency:
 
         dict_response = self._admin_client.request_post(request_url="search/currency", payload=payload)
         try:
-            currency_id = str(dict_response["data"][0]["id"])
+            currency_id = str(dict_response.data[0]["id"])
         except IndexError:
             raise FileNotFoundError(f'currency record with isoCode "{currency_iso_code}" not found') from None
         return currency_id
@@ -89,5 +89,5 @@ class Currency:
         # get_currencies}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="currency", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data

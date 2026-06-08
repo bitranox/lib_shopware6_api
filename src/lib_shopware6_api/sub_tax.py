@@ -82,7 +82,7 @@ class Tax:
 
         dict_response = self._admin_client.request_post(request_url="search/tax", payload=payload)
         try:
-            tax_id = str(dict_response["data"][0]["id"])
+            tax_id = str(dict_response.data[0]["id"])
         except IndexError:
             raise FileNotFoundError(f'tax record with name "{tax_name}" not found') from None
         return tax_id
@@ -110,7 +110,7 @@ class Tax:
         # get_taxes}}}
 
         dict_response = self._admin_client.request_get_paginated(request_url="tax", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data
 
     # get_tax_rate_by_name{{{
@@ -147,7 +147,7 @@ class Tax:
 
         dict_response = self._admin_client.request_post(request_url="search/tax", payload=payload)
         try:
-            tax_rate = str(dict_response["data"][0]["taxRate"])
+            tax_rate = str(dict_response.data[0]["taxRate"])
         except IndexError:
             raise FileNotFoundError(f'tax record with name "{tax_name}" not found') from None
         return Decimal(tax_rate)

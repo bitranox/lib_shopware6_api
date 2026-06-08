@@ -70,7 +70,7 @@ class Unit:
         """
         # get_units}}}
         dict_response = self._admin_client.request_get_paginated(request_url="unit", payload=payload)
-        l_dict_data = list(dict_response["data"])
+        l_dict_data = list(dict_response.data)
         return l_dict_data
 
     # search_units{{{
@@ -87,5 +87,5 @@ class Unit:
         """
         # search_units}}}
         response_dict = self._admin_client.request_post_paginated("search/unit", payload)
-        l_data_dict = list(response_dict["data"])
+        l_data_dict = list(response_dict.data)
         return l_data_dict

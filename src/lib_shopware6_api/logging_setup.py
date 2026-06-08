@@ -11,7 +11,7 @@ Notes
     Configuration overrides are read from ``LOG_*`` environment variables (and a
     local ``.env`` via :func:`lib_log_rich.config.enable_dotenv`). No external
     config schema is required, so this module deliberately avoids pulling in
-    ``lib_layered_config`` — it is not needed for basic logging setup.
+    ``lib_layered_config`` - it is not needed for basic logging setup.
 """
 
 from __future__ import annotations

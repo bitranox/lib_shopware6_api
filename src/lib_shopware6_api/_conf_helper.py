@@ -29,7 +29,6 @@ def get_docker_test_config() -> ConfShopware6ApiBase:
         username="admin",
         password="shopware",  # noqa: S106  # nosec B106 - public dockware default credential
         grant_type=GrantType.USER_CREDENTIALS,
-        insecure_transport="1",
     )
 
 

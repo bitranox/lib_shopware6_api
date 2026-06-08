@@ -11,16 +11,19 @@
 [![codecov](https://codecov.io/gh/bitranox/lib_shopware6_api/graph/badge.svg)](https://codecov.io/gh/bitranox/lib_shopware6_api)
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
-A higher-level Python API client for Shopware 6, built on top of
-[lib_shopware6_api_base](https://github.com/bitranox/lib_shopware6_api_base).
+`lib_shopware6_api` is a higher-level Python client for Shopware 6, built on
+[lib_shopware6_api_base](https://github.com/bitranox/lib_shopware6_api_base). It turns
+the raw Admin API into task-oriented helpers, and is a good base to extend with your own.
 
-It wraps the raw Admin API in convenient, task-oriented helpers for currencies,
-delivery times, media, products, taxes and units — including media-folder
-management, product-picture upserts and id/number lookups with caching. It is
-also a good starting point for your own API client functions, ready to be
-extended further.
+What it does:
 
-**Python 3.10+** required.
+- **Domain helpers** for currencies, delivery times, taxes, units, media, and products.
+- **Media management** - build media-folder trees, insert media from a URL or a path, and upsert product pictures.
+- **Product workflows** - create products, resolve ids by product number, and manage product-picture relations.
+- **Cached lookups** - resolve a currency by ISO code or a tax by name, with an lru_cache you can clear.
+- **A read-only CLI** - `test-connection`, `list` (currencies/taxes/units/delivery-times/products), `get-product`, and `config` inspection.
+- **Structured logging** with lib_log_rich and exit-code handling with lib_cli_exit_tools (both wired up by the CLI).
+- Runs on Linux, macOS, and Windows; needs **Python 3.10+**.
 
 ---
 
@@ -38,50 +41,47 @@ extended further.
 - [CLI Usage](#cli-usage)
 - [Installation](#installation)
 - [Development](#development)
-- [Requirements](#requirements)
-- [Changelog](CHANGELOG.md)
-- [License](#license)
+- [Further Documentation](#further-documentation)
 
 ---
 
 ## Configuration
 
-Authentication and endpoints are configured through `lib_shopware6_api_base`'s
-`ConfShopware6ApiBase` (Pydantic-based). It reads its settings from environment
-variables or a `.env` file, all using the `SHOPWARE_` prefix.
+Configuration is handled entirely by `lib_shopware6_api_base`: its `ConfShopware6ApiBase`
+(a Pydantic model) is loaded through
+[`lib_layered_config`](https://github.com/bitranox/lib_layered_config), merged in
+increasing precedence: bundled defaults -> app -> host -> user -> .env -> environment.
 
-Copy `example.env` to `.env` and adjust the values for your shop:
+Copy `example.env` to `.env` and adjust the values. In a `.env` file use the
+`SHOPWARE__<KEY>` form (double underscore); as a real environment variable prefix with
+`LIB_SHOPWARE6_API_BASE___`:
 
 ```bash
-# API Endpoints
-SHOPWARE_ADMIN_API_URL="https://shop.example.com/api"
-SHOPWARE_STOREFRONT_API_URL="https://shop.example.com/store-api"
+SHOPWARE__ADMIN_API_URL="https://shop.example.com/api"
+SHOPWARE__STOREFRONT_API_URL="https://shop.example.com/store-api"
 
-# OAuth2 Security (set to "1" only for local HTTP development)
-SHOPWARE_INSECURE_TRANSPORT="0"
-
-# Resource Owner Grant (for automation/CLI - no refresh tokens)
-SHOPWARE_CLIENT_ID="SWIAXXXXXXXXXXXXXXXXXXXX"
-SHOPWARE_CLIENT_SECRET="your-integration-secret"
+# Resource-owner / integration grant (automation; no refresh tokens)
+SHOPWARE__CLIENT_ID="SWIAXXXXXXXXXXXXXXXXXXXX"
+SHOPWARE__CLIENT_SECRET="your-integration-secret"
 
 # Grant type: USER_CREDENTIALS or RESOURCE_OWNER
-SHOPWARE_GRANT_TYPE="RESOURCE_OWNER"
+SHOPWARE__GRANT_TYPE="RESOURCE_OWNER"
 ```
 
-| Variable                           | Description             | Example                                |
-|------------------------------------|-------------------------|----------------------------------------|
-| `SHOPWARE_ADMIN_API_URL`           | Admin API endpoint      | `https://shop.example.com/api`         |
-| `SHOPWARE_STOREFRONT_API_URL`      | Storefront API endpoint | `https://shop.example.com/store-api`   |
-| `SHOPWARE_INSECURE_TRANSPORT`      | Allow HTTP (dev only)   | `0` (production) or `1` (dev)          |
-| `SHOPWARE_USERNAME`                | Admin user email        | `admin@example.com`                    |
-| `SHOPWARE_PASSWORD`                | Admin user password     | `secret`                               |
-| `SHOPWARE_CLIENT_ID`               | Integration Access ID   | `SWIA...`                              |
-| `SHOPWARE_CLIENT_SECRET`           | Integration Secret      | `...`                                  |
-| `SHOPWARE_GRANT_TYPE`              | Auth method             | `USER_CREDENTIALS` or `RESOURCE_OWNER` |
-| `SHOPWARE_STORE_API_SW_ACCESS_KEY` | Storefront access key   | `SWSC...`                              |
+| `.env` key                          | Description           | Example                                |
+|-------------------------------------|-----------------------|----------------------------------------|
+| `SHOPWARE__ADMIN_API_URL`           | Admin API endpoint    | `https://shop.example.com/api`         |
+| `SHOPWARE__STOREFRONT_API_URL`      | Store API endpoint    | `https://shop.example.com/store-api`   |
+| `SHOPWARE__USERNAME`                | Admin user name       | `admin@example.com`                    |
+| `SHOPWARE__PASSWORD`                | Admin user password   | `secret`                               |
+| `SHOPWARE__CLIENT_ID`               | Integration Access ID | `SWIA...`                              |
+| `SHOPWARE__CLIENT_SECRET`           | Integration secret    | `...`                                  |
+| `SHOPWARE__GRANT_TYPE`              | Auth method           | `USER_CREDENTIALS` or `RESOURCE_OWNER` |
+| `SHOPWARE__STORE_API_SW_ACCESS_KEY` | Store API access key  | `SWSC...`                              |
 
 See the [base library's configuration docs](https://github.com/bitranox/lib_shopware6_api_base#configuration)
-for the full reference and for loading helpers such as `load_config_from_env()`.
+for the full reference, the config-file layers, the env-var rename migration, and loading
+helpers such as `load_config_from_env()`.
 
 ---
 
@@ -108,7 +108,7 @@ api.tax            # tax helpers
 api.unit           # unit helpers
 ```
 
-Each helper can also be instantiated on its own (`Currency()`, `Product()`, …),
+Each helper can also be instantiated on its own (`Currency()`, `Product()`, ...),
 in which case it creates its own admin client from the same config.
 
 ---
@@ -122,7 +122,7 @@ from lib_shopware6_api import Shopware6API
 
 api = Shopware6API()
 
-# resolve a currency id by ISO code (cached) — raises FileNotFoundError if missing
+# resolve a currency id by ISO code (cached) - raises FileNotFoundError if missing
 currency_id = api.currency.get_currency_id_by_iso_code("EUR")
 
 # fetch all currency records (paginated automatically); pass a payload to filter
@@ -157,7 +157,7 @@ from decimal import Decimal
 
 api = Shopware6API()
 
-# resolve a tax id / rate by name (cached) — defaults to "Standard rate"
+# resolve a tax id / rate by name (cached) - defaults to "Standard rate"
 tax_id = api.tax.get_tax_id_by_name("Standard rate")
 tax_rate = api.tax.get_tax_rate_by_name("Standard rate")   # e.g. Decimal('19.00')
 
@@ -264,7 +264,7 @@ exists = api.product.is_product_number_existing("my-product-001")
 products = api.product.get_products()
 product_medias = api.product.get_product_medias()
 
-# upsert product pictures — first by position becomes the cover picture
+# upsert product pictures - first by position becomes the cover picture
 pictures = [
     ProductPicture(position=10, url="https://example.com/pic_01_1280.jpg"),
     ProductPicture(position=20, url="https://example.com/pic_02_1280.jpg"),
@@ -291,7 +291,7 @@ api.product.delete_product_by_id(product_id)
 ```
 Usage: lib_shopware6_api [OPTIONS] COMMAND [ARGS]...
 
-  use the shopware 6 api
+  python3 higher-level API client for shopware6
 
 Options:
   --version                     Show the version and exit.
@@ -299,7 +299,32 @@ Options:
   -h, --help                    Show this message and exit.
 
 Commands:
-  info  get program information
+  info             Get program information.
+  test-connection  Check that the configured credentials can reach Shopware.
+  get-product      Resolve a product's id by its product number.
+  list             List records (read-only).
+  config           Inspect the layered configuration.
+```
+
+The read commands use the same layered configuration as the library (see
+[Configuration](#configuration)):
+
+```bash
+# Verify the configured credentials reach the shop
+lib_shopware6_api test-connection
+# Admin API  OK    https://shop.example.com/api  (grant_type=USER_CREDENTIALS, shopware 6.4.7.0)
+
+# Read-only listers (printed as JSON)
+lib_shopware6_api list currencies
+lib_shopware6_api list taxes
+lib_shopware6_api list products --limit 20
+
+# Resolve a product id by its product number
+lib_shopware6_api get-product my-product-001
+
+# Inspect the effective config (secrets masked) and where it is loaded from
+lib_shopware6_api config show
+lib_shopware6_api config paths
 ```
 
 ---
@@ -349,18 +374,18 @@ integration suite (`pytest -m integration`).
 
 The integration tests exercise the higher-level helpers against a real Shopware
 instance using the [dockware](https://developer.shopware.com/docs/guides/installation/dockware)
-container. The test harness starts and stops the container automatically — no
+container. The test harness starts and stops the container automatically - no
 manual setup or credentials are required.
 
 Prerequisites:
 
 - **Docker** installed and running, with a **Linux** container engine
-  (`docker info --format '{{.OSType}}'` → `linux`). If Docker is unavailable or
+  (`docker info --format '{{.OSType}}'` -> `linux`). If Docker is unavailable or
   not Linux, the integration tests are **skipped** (not failed).
-- **Port 80** free — the container is published on `-p 80:80`.
+- **Port 80** free - the container is published on `-p 80:80`.
 - First run pulls `dockware/dev:latest` (a few GB), so it takes a while.
 
-Tip: for fast repeated runs, start the container once and leave it up — the
+Tip: for fast repeated runs, start the container once and leave it up - the
 harness reuses a running container (and only tears down one it started itself):
 
 ```bash
@@ -370,22 +395,9 @@ make testintegration    # reuses the running container, finishes in seconds
 
 ---
 
-## Requirements
+## Further Documentation
 
-Automatically installed dependencies:
-
-- `lib_shopware6_api_base` - the base API client (config, Admin/Storefront clients, Criteria/DAL)
-- `pydantic>=2.0.0` - data models (e.g. `ProductPicture`)
-- `rich-click` - CLI
-- `lib_cli_exit_tools` - CLI utilities
-- `lib_log_rich` - structured logging
-
----
-
-## License
-
-[MIT License](http://en.wikipedia.org/wiki/MIT_License)
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+- [Base library: lib_shopware6_api_base](https://github.com/bitranox/lib_shopware6_api_base) - config, Admin/Store clients, Criteria/DAL
+- [Contributor Guide](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
+- [License](LICENSE) (MIT)
