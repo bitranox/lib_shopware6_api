@@ -29,6 +29,7 @@ from . import __init__conf__
 from .exit_codes import ExitCode
 from .lib_shopware6_api import Shopware6API
 from .logging_setup import init_logging, shutdown_logging
+from .typed_click import argument, option, version_option
 
 # CONSTANTS
 CLICK_CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
@@ -122,12 +123,12 @@ def info() -> None:
 
 
 @click.group(help=__init__conf__.title, context_settings=CLICK_CONTEXT_SETTINGS)  # type: ignore
-@click.version_option(
+@version_option(
     version=__init__conf__.version,
     prog_name=__init__conf__.shell_command,
     message=f"{__init__conf__.shell_command} version {__init__conf__.version}",
 )
-@click.option("--traceback/--no-traceback", is_flag=True, type=bool, default=None, help="return traceback information on cli")
+@option("--traceback/--no-traceback", is_flag=True, type=bool, default=None, help="return traceback information on cli")
 def cli_main(traceback: bool | None = None) -> None:
     """Main CLI entry point."""
     if traceback is not None:
@@ -154,7 +155,7 @@ def cli_test_connection() -> None:
 
 
 @cli_main.command("get-product", context_settings=CLICK_CONTEXT_SETTINGS)  # type: ignore
-@click.argument("product_number")
+@argument("product_number")
 def cli_get_product(product_number: str) -> None:
     """Resolve a product's id by its product number and print it as JSON."""
     product_id = _build_api().product.get_product_id_by_product_number(product_number)
@@ -191,7 +192,7 @@ def cli_list_delivery_times() -> None:
 
 
 @cli_list.command("products", context_settings=CLICK_CONTEXT_SETTINGS)  # type: ignore
-@click.option("--limit", type=int, default=10, show_default=True, help="maximum number of products to fetch")
+@option("--limit", type=int, default=10, show_default=True, help="maximum number of products to fetch")
 def cli_list_products(limit: int) -> None:
     """List products (limited)."""
     _echo_json(_build_api().product.get_products(payload={"limit": limit}))
@@ -203,7 +204,7 @@ def cli_config() -> None:
 
 
 @cli_config.command("show", context_settings=CLICK_CONTEXT_SETTINGS)  # type: ignore
-@click.option(
+@option(
     "--section",
     type=click.Choice(["shopware", "lib_log_rich", "all"]),
     default="all",

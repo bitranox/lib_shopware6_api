@@ -1,13 +1,13 @@
 [project]
 name = "lib_shopware6_api"
-version = "3.0.0"
+version = "3.0.1"
 description = "python3 higher-level API client for shopware6"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "lib_shopware6_api_base>=6.0.1",
-    "lib_cli_exit_tools>=2.3.1",
-    "lib_log_rich>=6.3.4",
+    "lib_shopware6_api_base>=6.0.2",
+    "lib_cli_exit_tools>=2.3.2",
+    "lib_log_rich>=6.3.5",
     "pydantic>=2.13.4",
     "rich-click",
     "orjson",
@@ -133,7 +133,6 @@ extraPaths = [
   "src",
 ]
 # Suppress errors for untyped Shopware API response dicts and third-party libs without complete stubs
-reportUnknownMemberType = "warning"
 reportUnknownVariableType = "warning"
 reportUnknownArgumentType = "warning"
 reportUnknownParameterType = "warning"
