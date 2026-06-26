@@ -103,3 +103,6 @@ ENV/
 # pytest
 .pytest_cache
 .idea
+
+# Local, per-developer settings (Claude Code etc.) - never commit
+*.local.json
