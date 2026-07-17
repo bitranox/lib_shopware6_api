@@ -139,6 +139,10 @@ ignore = [
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
+# Notebooks: `sys` is used only inside `!{sys.executable}` shell cells, which ruff reads
+# as opaque strings and so reports the import as unused; and a Quickstart exists to print
+# its results to the reader.
+"notebooks/*.ipynb" = ["F401", "T201"]
 # Tests: assert is standard, test fixtures have passwords, magic values are clearer inline, temp paths are fine
 "tests/**/*.py" = ["T20", "S101", "S105", "S106", "S108", "S603", "S607", "FBT001", "FBT003", "PLR0913", "PLR2004", "PLW1510", "G004", "E501"]
 # CLI module: boolean flags from click decorators, exception mapper with multiple returns
