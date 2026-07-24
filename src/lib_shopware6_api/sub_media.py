@@ -581,6 +581,7 @@ class Media:
     def insert_media(
         self,
         media_folder_id: str | None,
+        *,
         url: str,
         media_alt_txt: str | None = None,
         media_title: str | None = None,
@@ -1064,6 +1065,7 @@ class Media:
     def update_media(
         self,
         media_folder_id: str | None,
+        *,
         url: str,
         media_alt_txt: str | None = None,
         media_title: str | None = None,
@@ -1149,6 +1151,7 @@ class Media:
     def upsert_media(
         self,
         product_number: int | str,
+        *,
         position: int,
         url: str,
         media_alt: str | None = None,

@@ -100,12 +100,12 @@ api = Shopware6API()
 # or pass an explicit config
 api = Shopware6API(config=ConfShopware6ApiBase(...))
 
-api.currency       # currency helpers
+api.currency  # currency helpers
 api.delivery_time  # delivery-time helpers
-api.media          # media + media-folder helpers
-api.product        # product helpers
-api.tax            # tax helpers
-api.unit           # unit helpers
+api.media  # media + media-folder helpers
+api.product  # product helpers
+api.tax  # tax helpers
+api.unit  # unit helpers
 ```
 
 Each helper can also be instantiated on its own (`Currency()`, `Product()`, ...),
@@ -159,7 +159,7 @@ api = Shopware6API()
 
 # resolve a tax id / rate by name (cached) - defaults to "Standard rate"
 tax_id = api.tax.get_tax_id_by_name("Standard rate")
-tax_rate = api.tax.get_tax_rate_by_name("Standard rate")   # e.g. Decimal('19.00')
+tax_rate = api.tax.get_tax_rate_by_name("Standard rate")  # e.g. Decimal('19.00')
 
 # all tax records (paginated)
 taxes = api.tax.get_taxes()
@@ -231,11 +231,11 @@ api.media.delete_media_folder_by_path("/Product Media/my_folder", force=True)
 from lib_shopware6_api.sub_product import ProductPicture
 
 ProductPicture(
-    position=10,                 # sort order in the shop; lowest position = cover
+    position=10,  # sort order in the shop; lowest position = cover
     url="https://example.com/picture_01_1280.jpg",
-    media_alt="alt text",        # optional
-    media_title="title",         # optional
-    upload_media=True,           # optional, default True
+    media_alt="alt text",  # optional
+    media_title="title",  # optional
+    upload_media=True,  # optional, default True
 )
 ```
 

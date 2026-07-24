@@ -17,12 +17,12 @@ __author_email__ = __init__conf__.author_email
 __shell_command__ = __init__conf__.shell_command
 
 __all__ = [
-    "Shopware6API",
     "Currency",
     "DeliveryTime",
     "Media",
     "Product",
     "ProductPicture",
+    "Shopware6API",
     "Tax",
     "Unit",
 ]

@@ -333,6 +333,7 @@ class Product:
     def insert_product(
         self,
         name: str,
+        *,
         product_number: int | str,
         stock: int = 0,
         price_brutto: Decimal = Decimal("0.00"),

@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.2] 2026-07-24 13:07:30
+
+### Fixed
+- `PLR0917` (too many positional arguments) on `Media.insert_media`, `Media.update_media`,
+  `Media.upsert_media`, and `Product.insert_product`, newly enforced by latest ruff: made the
+  trailing parameters keyword-only (`*,`). All call sites already passed these by keyword, so
+  no call-site changes were needed.
+
+### Changed
+- Removed the blanket `ignore = [RUF002, RUF022, PLC0415, TC001, TC002, TC003, TC006]` list from
+  `[tool.ruff.lint]` and fixed each rule at the root instead of suppressing it:
+  - `RUF022`: re-sorted `__all__` in `src/lib_shopware6_api/__init__.py`.
+  - `PLC0415` (deferred imports) only occurred in `tests/`, a deliberate idiom there (exercising
+    import/cache behaviour); added it to the existing `tests/**/*.py` per-file-ignore instead of
+    a blanket repo-wide ignore.
+  - `RUF002`/`TC001`/`TC002`/`TC003`/`TC006` had zero remaining hits under latest ruff.
+- Added `[tool.ruff.lint.flake8-type-checking] runtime-evaluated-base-classes = ["pydantic.BaseModel"]`
+  so pydantic model fields are not moved into `TYPE_CHECKING`-only imports by TC0xx autofixes.
+
 ## [3.0.1] 2026-06-14
 
 ### Changed
