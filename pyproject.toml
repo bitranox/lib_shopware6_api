@@ -1,6 +1,6 @@
 [project]
 name = "lib_shopware6_api"
-version = "3.0.3"
+version = "3.0.4"
 description = "python3 higher-level API client for shopware6"
 readme = "README.md"
 requires-python = ">=3.10"
