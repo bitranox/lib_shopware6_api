@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The source distribution ships only the package, its tests, `README.md`, `LICENSE`,
+  `CHANGELOG.md` and `pyproject.toml` (an include list). Earlier sdists also carried every other
+  root file and, in a local build, anything hidden only through `.git/info/exclude` or a nested
+  `.gitignore`. `tests/test_packaging.py` builds the sdist and wheel and checks both; `hatchling`
+  joins the dev extra for it.
+
+### Tests
+
+- The `os_posix` marker now skips a test on Windows, like `os_windows`, `os_macos` and `os_linux`
+  already did off their platforms; it was registered but wired to nothing, so a test trusting it ran on
+  Windows. `tests/test_platform_markers.py` pins all four.
+
 ## [3.0.3] 2026-10-13 15:49:53
 
 ### Added

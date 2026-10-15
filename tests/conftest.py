@@ -35,6 +35,8 @@ def pytest_collection_modifyitems(config: Config, items: list[Item]) -> None:
             item.add_marker(pytest.mark.skip(reason="macOS-only test"))
         if item.get_closest_marker("os_linux") and not sys.platform.startswith("linux"):
             item.add_marker(pytest.mark.skip(reason="Linux-only test"))
+        if item.get_closest_marker("os_posix") and sys.platform == "win32":
+            item.add_marker(pytest.mark.skip(reason="POSIX-only test"))
 
 
 def _docker_engine_is_linux() -> bool:
