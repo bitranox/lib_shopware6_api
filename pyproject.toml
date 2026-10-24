@@ -157,7 +157,10 @@ convention = "google"
 # Notebooks: `sys` is used only inside `!{sys.executable}` shell cells, which ruff reads
 # as opaque strings and so reports the import as unused; and a Quickstart exists to print
 # its results to the reader.
-"notebooks/*.ipynb" = ["F401", "T201"]
+# A `!cmd` never raises, so CI sees a failing shell command only through
+# `assert _exit_code == N` after it: IPython injects `_exit_code` at run time (F821)
+# and those asserts are the gate (S101).
+"notebooks/*.ipynb" = ["F401", "T201", "F821", "S101"]
 # Tests: assert is standard, test fixtures have passwords, magic values are clearer inline, temp paths are fine,
 # and deferred imports are a deliberate idiom (some tests import inside the body to exercise import/cache behaviour).
 "tests/**/*.py" = ["T20", "S101", "S105", "S106", "S108", "S603", "S607", "FBT001", "FBT003", "PLR0913", "PLR2004", "PLW1510", "G004", "E501", "PLC0415"]
