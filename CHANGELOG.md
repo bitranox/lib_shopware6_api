@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `_MAC_APP_ROOT`, `_PROGRAMDATA`) at an empty directory under `tmp_path`, so a system-wide deploy
   (for example a `/etc/xdg/<slug>/config.d/99-*.toml`) can no longer fail tests locally while CI
   stays green.
+- The test suite no longer reads the developer's own user configuration layer either. An autouse
+  fixture, `user_layer_in_tmp_path`, points the user layer (`XDG_CONFIG_HOME`,
+  `LIB_LAYERED_CONFIG_MAC_HOME_ROOT`, `_APPDATA`, `_LOCALAPPDATA`) at an empty directory under
+  `tmp_path`; `HOME` is not redirected, because git and uv read it.
 
 ## [3.0.4] 2026-10-15 16:36:41
 

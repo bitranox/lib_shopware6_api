@@ -7,7 +7,7 @@ requires-python = ">=3.10"
 dependencies = [
     "lib_shopware6_api_base>=6.1.2",
     "lib_cli_exit_tools>=2.4.1",
-    "lib_log_rich>=6.5.7",
+    "lib_log_rich>=7.0.1",
     "pydantic>=2.14.1",
     "rich-click",
     "orjson",
