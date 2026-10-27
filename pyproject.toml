@@ -7,7 +7,7 @@ requires-python = ">=3.10"
 dependencies = [
     "lib_shopware6_api_base>=6.1.2",
     "lib_cli_exit_tools>=2.4.1",
-    "lib_log_rich>=7.0.1",
+    "lib_log_rich>=8.0.3",
     "pydantic>=2.14.1",
     "rich-click",
     "orjson",
@@ -39,6 +39,7 @@ Changelog = "https://github.com/bitranox/lib_shopware6_api/blob/master/CHANGELOG
 dev = [
   "pytest>=9.1.1",
   "pytest-cov>=7.1.0",
+  "pytest-xdist>=3.8.0",
   "hypothesis>=6.168.5",
   "ruff>=0.17.2",
   "pyright[nodejs]>=1.1.414",
