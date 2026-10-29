@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `LIB_LAYERED_CONFIG_MAC_HOME_ROOT`, `_APPDATA`, `_LOCALAPPDATA`) at an empty directory under
   `tmp_path`; `HOME` is not redirected, because git and uv read it.
 
-## [3.0.4] 2026-10-15 16:36:41
+## [3.0.4] - 2026-10-15
 
 ### Fixed
 
@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   already did off their platforms; it was registered but wired to nothing, so a test trusting it ran on
   Windows. `tests/test_platform_markers.py` pins all four.
 
-## [3.0.3] 2026-10-13 15:49:53
+## [3.0.3] - 2026-10-13
 
 ### Added
 - Python 3.15 is a supported version: declared in the classifiers, so CI and `make test-all` run it.
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a plain `pip install` from PyPI does not.
 - `rtoml` floor raised to 0.14.0, the first release with Python 3.15 wheels.
 
-## [3.0.2] 2026-07-24 13:07:30
+## [3.0.2] - 2026-07-24
 
 ### Fixed
 - `PLR0917` (too many positional arguments) on `Media.insert_media`, `Media.update_media`,
@@ -67,7 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `[tool.ruff.lint.flake8-type-checking] runtime-evaluated-base-classes = ["pydantic.BaseModel"]`
   so pydantic model fields are not moved into `TYPE_CHECKING`-only imports by TC0xx autofixes.
 
-## [3.0.1] 2026-06-14
+## [3.0.1] - 2026-06-14
 
 ### Changed
 - Added a `typed_click.py` facade wrapping rich-click's `option` / `version_option` / `argument` decorators behind explicit, fully-known signatures, keeping the CLI strict-clean under pyright 1.1.410 (`reportUnknownMemberType`) without disabling the rule (ignore isolated to the facade).
